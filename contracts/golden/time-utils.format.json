@@ -1,0 +1,109 @@
+{
+  "subject": "TimeUtils.format",
+  "kotlin": "app/src/main/java/com/personalassistant/app/util/TimeUtils.kt",
+  "cases": [
+    {
+      "name": "formatIsoHm 对 Z 输入输出 Oslo 时刻",
+      "from": [],
+      "input": {
+        "fn": "formatIsoHm",
+        "args": [
+          "2026-09-23T07:00:00Z"
+        ]
+      },
+      "expected": "09:00"
+    },
+    {
+      "name": "formatIsoHm 解析失败输出占位符",
+      "from": [],
+      "input": {
+        "fn": "formatIsoHm",
+        "args": [
+          "not-a-time"
+        ]
+      },
+      "expected": "--:--"
+    },
+    {
+      "name": "delayMinutes 早到记为 0",
+      "from": [],
+      "input": {
+        "fn": "delayMinutes",
+        "args": [
+          "2026-09-23T09:05:00+02:00",
+          "2026-09-23T09:00:00+02:00"
+        ]
+      },
+      "expected": 0
+    },
+    {
+      "name": "delayMinutes 3 分 59 秒记为 3",
+      "from": [],
+      "input": {
+        "fn": "delayMinutes",
+        "args": [
+          "2026-09-23T09:00:00+02:00",
+          "2026-09-23T09:03:59+02:00"
+        ]
+      },
+      "expected": 3
+    },
+    {
+      "name": "delayMinutes 任一为 null 时为 null",
+      "from": [],
+      "input": {
+        "fn": "delayMinutes",
+        "args": [
+          null,
+          "2026-09-23T09:00:00+02:00"
+        ]
+      },
+      "expected": null
+    },
+    {
+      "name": "formatMinutes 59 秒不足 1 分钟",
+      "from": [],
+      "input": {
+        "fn": "formatMinutes",
+        "args": [
+          59
+        ]
+      },
+      "expected": "<1 分钟"
+    },
+    {
+      "name": "formatMinutes 89 秒四舍五入为 1 分钟",
+      "from": [],
+      "input": {
+        "fn": "formatMinutes",
+        "args": [
+          89
+        ]
+      },
+      "expected": "1 分钟"
+    },
+    {
+      "name": "formatMinutes 90 秒四舍五入为 2 分钟",
+      "from": [],
+      "input": {
+        "fn": "formatMinutes",
+        "args": [
+          90
+        ]
+      },
+      "expected": "2 分钟"
+    },
+    {
+      "name": "delayMinutes 小数秒截断为 0",
+      "from": [],
+      "input": {
+        "fn": "delayMinutes",
+        "args": [
+          "2026-09-23T09:00:00+02:00",
+          "2026-09-23T09:00:59.9996+02:00"
+        ]
+      },
+      "expected": 0
+    }
+  ]
+}

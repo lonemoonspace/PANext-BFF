@@ -1,0 +1,115 @@
+{
+  "subject": "OppositeTrainPolicy.describe",
+  "kotlin": "app/src/main/java/com/personalassistant/app/domain/OppositeTrainPolicy.kt",
+  "cases": [
+    {
+      "name": "对向车已取消：文案含时间与终到站",
+      "from": [
+        "OppositeTrainPolicyTest.cancelled opposite train reports CANCELLED with time and destination"
+      ],
+      "input": {
+        "line": "L1",
+        "destination": "Spikkestad",
+        "aimedDepartureTime": "2026-09-10T08:12:00+02:00",
+        "expectedDepartureTime": "2026-09-10T08:12:00+02:00",
+        "cancelled": true,
+        "realtimeKnown": true
+      },
+      "expected": {
+        "state": "CANCELLED",
+        "text": "对向 L1（Spikkestad 方向）08:12 已取消，单线区段可能受影响"
+      }
+    },
+    {
+      "name": "对向车延误 7 分钟：文案含分钟数与 HH:mm 时刻",
+      "from": [
+        "OppositeTrainPolicyTest.delayed opposite train reports DELAYED with minutes",
+        "OppositeTrainPolicyTest.text shows HH-mm clock time, not raw ISO or offset"
+      ],
+      "input": {
+        "line": "L1",
+        "destination": "Spikkestad",
+        "aimedDepartureTime": "2026-09-10T08:12:00+02:00",
+        "expectedDepartureTime": "2026-09-10T08:19:00+02:00",
+        "cancelled": false,
+        "realtimeKnown": true
+      },
+      "expected": {
+        "state": "DELAYED",
+        "text": "对向 L1（Spikkestad 方向）08:19 延误 7 分钟，单线区段可能连带延误，请预留时间"
+      }
+    },
+    {
+      "name": "对向车正点：非空文案",
+      "from": [
+        "OppositeTrainPolicyTest.on-time opposite train reports ON_TIME with non-blank text"
+      ],
+      "input": {
+        "line": "L1",
+        "destination": "Spikkestad",
+        "aimedDepartureTime": "2026-09-10T08:12:00+02:00",
+        "expectedDepartureTime": "2026-09-10T08:12:00+02:00",
+        "cancelled": false,
+        "realtimeKnown": true
+      },
+      "expected": {
+        "state": "ON_TIME",
+        "text": "对向 L1（Spikkestad 方向）08:12 正点"
+      }
+    },
+    {
+      "name": "无实时数据报告 UNKNOWN 而非正点",
+      "from": [
+        "OppositeTrainPolicyTest.no realtime data reports UNKNOWN, never ON_TIME"
+      ],
+      "input": {
+        "line": "L1",
+        "destination": "Spikkestad",
+        "aimedDepartureTime": "2026-09-10T08:12:00+02:00",
+        "expectedDepartureTime": null,
+        "cancelled": false,
+        "realtimeKnown": false
+      },
+      "expected": {
+        "state": "UNKNOWN",
+        "text": "对向 L1（Spikkestad 方向）08:12 暂无实时数据，单线区段影响未知"
+      }
+    },
+    {
+      "name": "取消优先于未知实时状态",
+      "from": [
+        "OppositeTrainPolicyTest.cancelled wins over unknown realtime"
+      ],
+      "input": {
+        "line": "L1",
+        "destination": "Spikkestad",
+        "aimedDepartureTime": "2026-09-10T08:12:00+02:00",
+        "expectedDepartureTime": null,
+        "cancelled": true,
+        "realtimeKnown": false
+      },
+      "expected": {
+        "state": "CANCELLED",
+        "text": "对向 L1（Spikkestad 方向）08:12 已取消，单线区段可能受影响"
+      }
+    },
+    {
+      "name": "无实时预计发车时间时回退到计划时间",
+      "from": [
+        "OppositeTrainPolicyTest.falls back to aimed time when expected is null"
+      ],
+      "input": {
+        "line": "L1",
+        "destination": "Spikkestad",
+        "aimedDepartureTime": "2026-09-10T08:12:00+02:00",
+        "expectedDepartureTime": null,
+        "cancelled": false,
+        "realtimeKnown": true
+      },
+      "expected": {
+        "state": "ON_TIME",
+        "text": "对向 L1（Spikkestad 方向）08:12 正点"
+      }
+    }
+  ]
+}

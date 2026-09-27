@@ -1,0 +1,29 @@
+{
+  "name": "pa-bff",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "typecheck": "tsc --noEmit && tsc -p admin-ui --noEmit",
+    "test": "vitest run",
+    "deploy": "wrangler deploy",
+    "deploy:dry": "wrangler deploy --dry-run --outdir dist",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate:local": "wrangler d1 migrations apply pa-bff --local",
+    "db:migrate:remote": "wrangler d1 migrations apply pa-bff --remote"
+  },
+  "dependencies": {
+    "drizzle-orm": "0.45.3",
+    "hono": "4.13.8",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "0.22.0",
+    "@cloudflare/workers-types": "5.20260919.1",
+    "drizzle-kit": "0.31.11",
+    "typescript": "7.0.2",
+    "vitest": "4.1.11",
+    "wrangler": "4.135.0"
+  }
+}

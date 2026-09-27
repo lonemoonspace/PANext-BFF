@@ -1,0 +1,322 @@
+{
+  "subject": "AdviceEngine.planAdvise",
+  "kotlin": "app/src/main/java/com/personalassistant/app/domain/AdviceEngine.kt",
+  "cases": [
+    {
+      "name": "实时信息未知时不算正点",
+      "from": [
+        "AdviceEngineTest.unknownRealtimeDoesNotReportOnTime"
+      ],
+      "input": {
+        "legs": [
+          {
+            "line": "L1",
+            "depTime": "2026-08-18T10:00:00+02:00",
+            "arrTime": "2026-08-18T10:30:00+02:00",
+            "delayKnown": false
+          }
+        ],
+        "destination": "Sandvika",
+        "alternatives": []
+      },
+      "expected": {
+        "level": "UNKNOWN",
+        "text": "实时信息未知，暂无法确认是否正点；请以车站广播和 Entur 最新信息为准"
+      }
+    },
+    {
+      "name": "有实时数据且正点时返回 GOOD",
+      "from": [
+        "AdviceEngineTest.realtimeOnTimeReportsGood"
+      ],
+      "input": {
+        "legs": [
+          {
+            "line": "L1",
+            "depTime": "2026-08-18T10:00:00+02:00",
+            "arrTime": "2026-08-18T10:30:00+02:00",
+            "delayKnown": true
+          }
+        ],
+        "destination": "Sandvika",
+        "alternatives": []
+      },
+      "expected": {
+        "level": "GOOD",
+        "text": "正点！L1 10:00 发车，预计 10:30 到 Sandvika"
+      }
+    },
+    {
+      "name": "已知延误返回 WARN",
+      "from": [
+        "AdviceEngineTest.knownDelayReportsWarning"
+      ],
+      "input": {
+        "legs": [
+          {
+            "line": "L1",
+            "depTime": "2026-08-18T10:00:00+02:00",
+            "arrTime": "2026-08-18T10:30:00+02:00",
+            "delayKnown": true,
+            "delayMin": 5
+          }
+        ],
+        "destination": "Sandvika",
+        "alternatives": []
+      },
+      "expected": {
+        "level": "WARN",
+        "text": "L1 延误 5 分钟，预计 10:30 到 Sandvika"
+      }
+    },
+    {
+      "name": "取消优先于延误判定，且无备选时文案不留悬空冒号",
+      "from": [
+        "AdviceEngineTest.cancellationTakesPriority",
+        "AdviceEngineTest.cancellationWithoutAlternativesHasNoDanglingColon"
+      ],
+      "input": {
+        "legs": [
+          {
+            "line": "L1",
+            "depTime": "2026-08-18T10:00:00+02:00",
+            "arrTime": "2026-08-18T10:30:00+02:00",
+            "delayKnown": false,
+            "cancelled": true
+          }
+        ],
+        "destination": "Sandvika",
+        "alternatives": []
+      },
+      "expected": {
+        "level": "BAD",
+        "text": "L1 10:00 已取消！暂无可改乘班次"
+      }
+    },
+    {
+      "name": "到达时间缺失不算正点",
+      "from": [
+        "AdviceEngineTest.missingArrivalDoesNotReportGood"
+      ],
+      "input": {
+        "legs": [
+          {
+            "line": "L1",
+            "depTime": "2026-08-18T10:00:00+02:00",
+            "arrTime": "",
+            "delayKnown": true
+          }
+        ],
+        "destination": "Sandvika",
+        "alternatives": []
+      },
+      "expected": {
+        "level": "UNKNOWN",
+        "text": "到达时间未知或数据异常，暂无法确认预计到达时间；请以 Entur 最新信息为准"
+      }
+    },
+    {
+      "name": "到达时间早于出发时间视为数据异常",
+      "from": [],
+      "input": {
+        "legs": [
+          {
+            "line": "L1",
+            "depTime": "2026-08-18T10:00:00+02:00",
+            "arrTime": "2026-08-18T09:30:00+02:00",
+            "delayKnown": true
+          }
+        ],
+        "destination": "Sandvika",
+        "alternatives": []
+      },
+      "expected": {
+        "level": "UNKNOWN",
+        "text": "到达时间未知或数据异常，暂无法确认预计到达时间；请以 Entur 最新信息为准"
+      }
+    },
+    {
+      "name": "多段行程且有延误时给出 WARN 换乘提示",
+      "from": [],
+      "input": {
+        "legs": [
+          {
+            "line": "L1",
+            "depTime": "2026-08-18T10:00:00+02:00",
+            "arrTime": "2026-08-18T10:20:00+02:00",
+            "delayKnown": true,
+            "delayMin": 3
+          },
+          {
+            "line": "R14",
+            "depTime": "2026-08-18T10:25:00+02:00",
+            "arrTime": "2026-08-18T10:40:00+02:00",
+            "delayKnown": true
+          }
+        ],
+        "destination": "Sandvika",
+        "alternatives": []
+      },
+      "expected": {
+        "level": "WARN",
+        "text": "最快方案中 L1 延误 3 分钟，换乘可能受影响，请留意实时信息"
+      }
+    },
+    {
+      "name": "多段行程全程 0 分钟时不写全程分钟数",
+      "from": [],
+      "input": {
+        "legs": [
+          {
+            "line": "L1",
+            "depTime": "2026-08-18T10:00:00+02:00",
+            "arrTime": "2026-08-18T10:00:00+02:00",
+            "delayKnown": true
+          },
+          {
+            "line": "R14",
+            "depTime": "2026-08-18T10:00:00+02:00",
+            "arrTime": "2026-08-18T10:00:00+02:00",
+            "delayKnown": true
+          }
+        ],
+        "destination": "Sandvika",
+        "alternatives": []
+      },
+      "expected": {
+        "level": "GOOD",
+        "text": "最快方案（实时时刻），含 1 次换乘"
+      }
+    },
+    {
+      "name": "无 legs 且无 alternatives",
+      "from": [],
+      "input": {
+        "legs": [],
+        "destination": "Sandvika",
+        "alternatives": []
+      },
+      "expected": {
+        "level": "UNKNOWN",
+        "text": "未找到班次。请稍后刷新重试"
+      }
+    },
+    {
+      "name": "无 legs 但有 alternatives",
+      "from": [],
+      "input": {
+        "legs": [],
+        "destination": "Sandvika",
+        "alternatives": [
+          "L1 10:24",
+          "L1 10:54"
+        ]
+      },
+      "expected": {
+        "level": "UNKNOWN",
+        "text": "未找到班次。建议班次：L1 10:24；L1 10:54"
+      }
+    },
+    {
+      "name": "取消且有两条备选班次",
+      "from": [],
+      "input": {
+        "legs": [
+          {
+            "line": "L1",
+            "depTime": "2026-08-18T10:00:00+02:00",
+            "arrTime": "2026-08-18T10:30:00+02:00",
+            "delayKnown": false,
+            "cancelled": true
+          }
+        ],
+        "destination": "Sandvika",
+        "alternatives": [
+          "L1 10:24",
+          "L1 10:54"
+        ]
+      },
+      "expected": {
+        "level": "BAD",
+        "text": "L1 10:00 已取消！建议改乘：L1 10:24；L1 10:54"
+      }
+    },
+    {
+      "name": "多段全程正点且全程时长大于 0 分钟",
+      "from": [],
+      "input": {
+        "legs": [
+          {
+            "line": "L1",
+            "depTime": "2026-08-18T10:00:00+02:00",
+            "arrTime": "2026-08-18T10:20:00+02:00",
+            "delayKnown": true,
+            "delayMin": 0
+          },
+          {
+            "line": "R14",
+            "depTime": "2026-08-18T10:25:00+02:00",
+            "arrTime": "2026-08-18T10:40:00+02:00",
+            "delayKnown": true,
+            "delayMin": 0
+          }
+        ],
+        "destination": "Sandvika",
+        "alternatives": []
+      },
+      "expected": {
+        "level": "GOOD",
+        "text": "最快方案（实时时刻），全程约 40 分钟，含 1 次换乘"
+      }
+    },
+    {
+      "name": "两段均有已知延误",
+      "from": [],
+      "input": {
+        "legs": [
+          {
+            "line": "L1",
+            "depTime": "2026-08-18T10:00:00+02:00",
+            "arrTime": "2026-08-18T10:20:00+02:00",
+            "delayKnown": true,
+            "delayMin": 3
+          },
+          {
+            "line": "R14",
+            "depTime": "2026-08-18T10:25:00+02:00",
+            "arrTime": "2026-08-18T10:40:00+02:00",
+            "delayKnown": true,
+            "delayMin": 4
+          }
+        ],
+        "destination": "Sandvika",
+        "alternatives": []
+      },
+      "expected": {
+        "level": "WARN",
+        "text": "最快方案中 L1 延误 3 分钟、R14 延误 4 分钟，换乘可能受影响，请留意实时信息"
+      }
+    },
+    {
+      "name": "单段 delayKnown 为 false 且 delayMin 为 7",
+      "from": [],
+      "input": {
+        "legs": [
+          {
+            "line": "L1",
+            "depTime": "2026-08-18T10:00:00+02:00",
+            "arrTime": "2026-08-18T10:30:00+02:00",
+            "delayKnown": false,
+            "delayMin": 7
+          }
+        ],
+        "destination": "Sandvika",
+        "alternatives": []
+      },
+      "expected": {
+        "level": "UNKNOWN",
+        "text": "实时信息未知，暂无法确认是否正点；请以车站广播和 Entur 最新信息为准"
+      }
+    }
+  ]
+}

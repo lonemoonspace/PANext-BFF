@@ -1,0 +1,320 @@
+{
+  "subject": "TicketPolicy.evaluate",
+  "kotlin": "app/src/main/java/com/personalassistant/app/domain/TicketPolicy.kt",
+  "cases": [
+    {
+      "name": "进入提醒期首次发 soon 通知",
+      "from": [
+        "TicketPolicyTest.notifies once when entering the warning period and once on the last day"
+      ],
+      "input": {
+        "transitPassUntil": "2026-09-17T23:59:59",
+        "parkingPassUntil": "",
+        "now": "2026-09-15T10:00:00+02:00",
+        "previousKeys": []
+      },
+      "expected": {
+        "notifications": [
+          {
+            "kind": "TRANSIT",
+            "title": "乘车月票还剩 2 天",
+            "body": "有效期至 9月17日 23:59，记得在 Ruter 续买，并回到设置更新截止时间。"
+          }
+        ],
+        "newKeys": [
+          "TRANSIT:2026-09-17T23:59:soon"
+        ]
+      }
+    },
+    {
+      "name": "同一档不重复提醒",
+      "from": [
+        "TicketPolicyTest.notifies once when entering the warning period and once on the last day"
+      ],
+      "input": {
+        "transitPassUntil": "2026-09-17T23:59:59",
+        "parkingPassUntil": "",
+        "now": "2026-09-16T10:00:00+02:00",
+        "previousKeys": [
+          "TRANSIT:2026-09-17T23:59:soon"
+        ]
+      },
+      "expected": {
+        "notifications": [],
+        "newKeys": [
+          "TRANSIT:2026-09-17T23:59:soon"
+        ]
+      }
+    },
+    {
+      "name": "截止当天发 last 通知",
+      "from": [
+        "TicketPolicyTest.notifies once when entering the warning period and once on the last day"
+      ],
+      "input": {
+        "transitPassUntil": "2026-09-17T23:59:59",
+        "parkingPassUntil": "",
+        "now": "2026-09-17T10:00:00+02:00",
+        "previousKeys": [
+          "TRANSIT:2026-09-17T23:59:soon"
+        ]
+      },
+      "expected": {
+        "notifications": [
+          {
+            "kind": "TRANSIT",
+            "title": "乘车月票今天到期",
+            "body": "有效期至 9月17日 23:59，记得在 Ruter 续买，并回到设置更新截止时间。"
+          }
+        ],
+        "newKeys": [
+          "TRANSIT:2026-09-17T23:59:last",
+          "TRANSIT:2026-09-17T23:59:soon"
+        ]
+      }
+    },
+    {
+      "name": "截止当天首次检查只发 last 不连发 soon",
+      "from": [
+        "TicketPolicyTest.first check on the last day sends only one notification"
+      ],
+      "input": {
+        "transitPassUntil": "2026-09-15T23:59:59",
+        "parkingPassUntil": "",
+        "now": "2026-09-15T10:00:00+02:00",
+        "previousKeys": []
+      },
+      "expected": {
+        "notifications": [
+          {
+            "kind": "TRANSIT",
+            "title": "乘车月票今天到期",
+            "body": "有效期至 9月15日 23:59，记得在 Ruter 续买，并回到设置更新截止时间。"
+          }
+        ],
+        "newKeys": [
+          "TRANSIT:2026-09-15T23:59:last",
+          "TRANSIT:2026-09-15T23:59:soon"
+        ]
+      }
+    },
+    {
+      "name": "当天再次检查不重发",
+      "from": [
+        "TicketPolicyTest.first check on the last day sends only one notification"
+      ],
+      "input": {
+        "transitPassUntil": "2026-09-15T23:59:59",
+        "parkingPassUntil": "",
+        "now": "2026-09-15T15:00:00+02:00",
+        "previousKeys": [
+          "TRANSIT:2026-09-15T23:59:last",
+          "TRANSIT:2026-09-15T23:59:soon"
+        ]
+      },
+      "expected": {
+        "notifications": [],
+        "newKeys": [
+          "TRANSIT:2026-09-15T23:59:last",
+          "TRANSIT:2026-09-15T23:59:soon"
+        ]
+      }
+    },
+    {
+      "name": "v5.1.1 带秒旧 key 规整后不重发",
+      "from": [
+        "TicketPolicyTest.reminders already sent with v5_1_1 second-precision keys are not repeated"
+      ],
+      "input": {
+        "transitPassUntil": "2026-09-17T23:59:59",
+        "parkingPassUntil": "",
+        "now": "2026-09-15T10:00:00+02:00",
+        "previousKeys": [
+          "TRANSIT:2026-09-17T23:59:59:soon"
+        ]
+      },
+      "expected": {
+        "notifications": [],
+        "newKeys": [
+          "TRANSIT:2026-09-17T23:59:soon"
+        ]
+      }
+    },
+    {
+      "name": "已过期不提醒",
+      "from": [
+        "TicketPolicyTest.no notification once already expired"
+      ],
+      "input": {
+        "transitPassUntil": "2026-09-15T09:00:00",
+        "parkingPassUntil": "",
+        "now": "2026-09-15T10:00:00+02:00",
+        "previousKeys": []
+      },
+      "expected": {
+        "notifications": [],
+        "newKeys": []
+      }
+    },
+    {
+      "name": "夜间不提醒",
+      "from": [
+        "TicketPolicyTest.no notifications at night"
+      ],
+      "input": {
+        "transitPassUntil": "2026-09-16T23:59:59",
+        "parkingPassUntil": "",
+        "now": "2026-09-15T23:00:00+02:00",
+        "previousKeys": []
+      },
+      "expected": {
+        "notifications": [],
+        "newKeys": []
+      }
+    },
+    {
+      "name": "明天到期发 soon 通知",
+      "from": [
+        "TicketPolicyTest.renewing with a new expiry re-arms reminders and drops stale keys"
+      ],
+      "input": {
+        "transitPassUntil": "2026-09-16T23:59:59",
+        "parkingPassUntil": "",
+        "now": "2026-09-15T10:00:00+02:00",
+        "previousKeys": []
+      },
+      "expected": {
+        "notifications": [
+          {
+            "kind": "TRANSIT",
+            "title": "乘车月票明天到期",
+            "body": "有效期至 9月16日 23:59，记得在 Ruter 续买，并回到设置更新截止时间。"
+          }
+        ],
+        "newKeys": [
+          "TRANSIT:2026-09-16T23:59:soon"
+        ]
+      }
+    },
+    {
+      "name": "续买后旧截止时间的 key 被清理",
+      "from": [
+        "TicketPolicyTest.renewing with a new expiry re-arms reminders and drops stale keys"
+      ],
+      "input": {
+        "transitPassUntil": "2026-10-15T23:59:59",
+        "parkingPassUntil": "",
+        "now": "2026-09-15T10:00:00+02:00",
+        "previousKeys": [
+          "TRANSIT:2026-09-16T23:59:soon"
+        ]
+      },
+      "expected": {
+        "notifications": [],
+        "newKeys": []
+      }
+    },
+    {
+      "name": "07:59 在提醒窗口外不提醒",
+      "from": [],
+      "input": {
+        "transitPassUntil": "2026-09-16T23:59:59",
+        "parkingPassUntil": "",
+        "now": "2026-09-15T07:59:00+02:00",
+        "previousKeys": []
+      },
+      "expected": {
+        "notifications": [],
+        "newKeys": []
+      }
+    },
+    {
+      "name": "08:00 进入提醒窗口开始提醒",
+      "from": [],
+      "input": {
+        "transitPassUntil": "2026-09-16T23:59:59",
+        "parkingPassUntil": "",
+        "now": "2026-09-15T08:00:00+02:00",
+        "previousKeys": []
+      },
+      "expected": {
+        "notifications": [
+          {
+            "kind": "TRANSIT",
+            "title": "乘车月票明天到期",
+            "body": "有效期至 9月16日 23:59，记得在 Ruter 续买，并回到设置更新截止时间。"
+          }
+        ],
+        "newKeys": [
+          "TRANSIT:2026-09-16T23:59:soon"
+        ]
+      }
+    },
+    {
+      "name": "20:59 仍在提醒窗口内",
+      "from": [],
+      "input": {
+        "transitPassUntil": "2026-09-16T23:59:59",
+        "parkingPassUntil": "",
+        "now": "2026-09-15T20:59:00+02:00",
+        "previousKeys": []
+      },
+      "expected": {
+        "notifications": [
+          {
+            "kind": "TRANSIT",
+            "title": "乘车月票明天到期",
+            "body": "有效期至 9月16日 23:59，记得在 Ruter 续买，并回到设置更新截止时间。"
+          }
+        ],
+        "newKeys": [
+          "TRANSIT:2026-09-16T23:59:soon"
+        ]
+      }
+    },
+    {
+      "name": "21:00 超出提醒窗口不提醒",
+      "from": [],
+      "input": {
+        "transitPassUntil": "2026-09-16T23:59:59",
+        "parkingPassUntil": "",
+        "now": "2026-09-15T21:00:00+02:00",
+        "previousKeys": []
+      },
+      "expected": {
+        "notifications": [],
+        "newKeys": []
+      }
+    },
+    {
+      "name": "两张票同时到期各自提醒",
+      "from": [],
+      "input": {
+        "transitPassUntil": "2026-09-15T23:59:59",
+        "parkingPassUntil": "2026-09-15T20:00:00",
+        "now": "2026-09-15T10:00:00+02:00",
+        "previousKeys": []
+      },
+      "expected": {
+        "notifications": [
+          {
+            "kind": "TRANSIT",
+            "title": "乘车月票今天到期",
+            "body": "有效期至 9月15日 23:59，记得在 Ruter 续买，并回到设置更新截止时间。"
+          },
+          {
+            "kind": "PARKING",
+            "title": "停车票今天到期",
+            "body": "有效期至 9月15日 20:00，记得在 Bane NOR Parkering 续买，并回到设置更新截止时间。"
+          }
+        ],
+        "newKeys": [
+          "PARKING:2026-09-15T20:00:last",
+          "PARKING:2026-09-15T20:00:soon",
+          "TRANSIT:2026-09-15T23:59:last",
+          "TRANSIT:2026-09-15T23:59:soon"
+        ]
+      }
+    }
+  ]
+}

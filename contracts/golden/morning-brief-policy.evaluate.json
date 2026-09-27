@@ -1,0 +1,615 @@
+{
+  "subject": "MorningBriefPolicy.evaluate",
+  "kotlin": "app/src/main/java/com/personalassistant/app/domain/MorningBriefPolicy.kt",
+  "cases": [
+    {
+      "name": "上班窗口内首次刷新无历史发送记录 → 通知",
+      "from": [
+        "MorningBriefPolicyTest.first refresh inside WORK window with no previous send notifies"
+      ],
+      "input": {
+        "weather": {
+          "temperature": 5.0,
+          "symbolCode": "cloudy"
+        },
+        "train": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-10T07:15:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 0
+              }
+            ]
+          }
+        },
+        "traffic": {
+          "durationSec": 1800
+        },
+        "window": "WORK",
+        "today": "2026-09-10",
+        "lastSentDate": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "早间简报",
+        "body": "5°C ☁️ 阴 · L1 07:15 正点 · 预计用时 30 分钟",
+        "newLastSentDate": "2026-09-10"
+      }
+    },
+    {
+      "name": "同一天第二次调用不再发",
+      "from": [
+        "MorningBriefPolicyTest.second refresh same day does not notify again"
+      ],
+      "input": {
+        "weather": {
+          "temperature": 8.0,
+          "symbolCode": "cloudy"
+        },
+        "train": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-10T07:15:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 0
+              }
+            ]
+          }
+        },
+        "traffic": {
+          "durationSec": 1800
+        },
+        "window": "WORK",
+        "today": "2026-09-10",
+        "lastSentDate": "2026-09-10"
+      },
+      "expected": {
+        "shouldNotify": false,
+        "title": "",
+        "body": "",
+        "newLastSentDate": "2026-09-10"
+      }
+    },
+    {
+      "name": "次日同一时间再次发",
+      "from": [
+        "MorningBriefPolicyTest.next day at the same time notifies again"
+      ],
+      "input": {
+        "weather": {
+          "temperature": 5.0,
+          "symbolCode": "cloudy"
+        },
+        "train": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-10T07:15:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 0
+              }
+            ]
+          }
+        },
+        "traffic": {
+          "durationSec": 1800
+        },
+        "window": "WORK",
+        "today": "2026-09-11",
+        "lastSentDate": "2026-09-10"
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "早间简报",
+        "body": "5°C ☁️ 阴 · L1 07:15 正点 · 预计用时 30 分钟",
+        "newLastSentDate": "2026-09-11"
+      }
+    },
+    {
+      "name": "RETURN 窗口不发",
+      "from": [
+        "MorningBriefPolicyTest.RETURN window does not notify"
+      ],
+      "input": {
+        "weather": {
+          "temperature": 5.0,
+          "symbolCode": "cloudy"
+        },
+        "train": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-10T07:15:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 0
+              }
+            ]
+          }
+        },
+        "traffic": {
+          "durationSec": 1800
+        },
+        "window": "RETURN",
+        "today": "2026-09-10",
+        "lastSentDate": null
+      },
+      "expected": {
+        "shouldNotify": false,
+        "title": "",
+        "body": "",
+        "newLastSentDate": null
+      }
+    },
+    {
+      "name": "OUTSIDE 窗口不发且不改写 lastSentDate",
+      "from": [
+        "MorningBriefPolicyTest.OUTSIDE window does not notify and leaves lastSentDate untouched"
+      ],
+      "input": {
+        "weather": {
+          "temperature": 5.0,
+          "symbolCode": "cloudy"
+        },
+        "train": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-10T07:15:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 0
+              }
+            ]
+          }
+        },
+        "traffic": {
+          "durationSec": 1800
+        },
+        "window": "OUTSIDE",
+        "today": "2026-09-10",
+        "lastSentDate": "2026-09-07"
+      },
+      "expected": {
+        "shouldNotify": false,
+        "title": "",
+        "body": "",
+        "newLastSentDate": "2026-09-07"
+      }
+    },
+    {
+      "name": "天气缺失仍发送，占位文案",
+      "from": [
+        "MorningBriefPolicyTest.missing weather still notifies with placeholder text"
+      ],
+      "input": {
+        "weather": null,
+        "train": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-10T07:15:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 0
+              }
+            ]
+          }
+        },
+        "traffic": {
+          "durationSec": 1800
+        },
+        "window": "WORK",
+        "today": "2026-09-10",
+        "lastSentDate": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "早间简报",
+        "body": "暂无数据 · L1 07:15 正点 · 预计用时 30 分钟",
+        "newLastSentDate": "2026-09-10"
+      }
+    },
+    {
+      "name": "火车缺失仍发送，占位文案",
+      "from": [
+        "MorningBriefPolicyTest.missing train still notifies with placeholder text"
+      ],
+      "input": {
+        "weather": {
+          "temperature": 5.0,
+          "symbolCode": "cloudy"
+        },
+        "train": null,
+        "traffic": {
+          "durationSec": 1800
+        },
+        "window": "WORK",
+        "today": "2026-09-10",
+        "lastSentDate": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "早间简报",
+        "body": "5°C ☁️ 阴 · 暂无数据 · 预计用时 30 分钟",
+        "newLastSentDate": "2026-09-10"
+      }
+    },
+    {
+      "name": "火车方案无 legs 视为缺失",
+      "from": [
+        "MorningBriefPolicyTest.train plan with no legs is treated as missing and shows placeholder text"
+      ],
+      "input": {
+        "weather": {
+          "temperature": 5.0,
+          "symbolCode": "cloudy"
+        },
+        "train": {
+          "work": {
+            "legs": []
+          }
+        },
+        "traffic": {
+          "durationSec": 1800
+        },
+        "window": "WORK",
+        "today": "2026-09-10",
+        "lastSentDate": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "早间简报",
+        "body": "5°C ☁️ 阴 · 暂无数据 · 预计用时 30 分钟",
+        "newLastSentDate": "2026-09-10"
+      }
+    },
+    {
+      "name": "路况缺失仍发送，占位文案",
+      "from": [
+        "MorningBriefPolicyTest.missing traffic still notifies with placeholder text"
+      ],
+      "input": {
+        "weather": {
+          "temperature": 5.0,
+          "symbolCode": "cloudy"
+        },
+        "train": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-10T07:15:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 0
+              }
+            ]
+          }
+        },
+        "traffic": null,
+        "window": "WORK",
+        "today": "2026-09-10",
+        "lastSentDate": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "早间简报",
+        "body": "5°C ☁️ 阴 · L1 07:15 正点 · 暂无数据",
+        "newLastSentDate": "2026-09-10"
+      }
+    },
+    {
+      "name": "三个来源全部缺失不发送且不消耗当天机会",
+      "from": [
+        "MorningBriefPolicyTest.all three sources missing does not notify and does not consume the day"
+      ],
+      "input": {
+        "weather": null,
+        "train": null,
+        "traffic": null,
+        "window": "WORK",
+        "today": "2026-09-10",
+        "lastSentDate": null
+      },
+      "expected": {
+        "shouldNotify": false,
+        "title": "",
+        "body": "",
+        "newLastSentDate": null
+      }
+    },
+    {
+      "name": "正文时刻为可读时钟而非原始 ISO",
+      "from": [
+        "MorningBriefPolicyTest.body shows a human readable clock time for the train leg, not a raw iso string"
+      ],
+      "input": {
+        "weather": {
+          "temperature": 5.0,
+          "symbolCode": "cloudy"
+        },
+        "train": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-10T07:15:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 0
+              }
+            ]
+          }
+        },
+        "traffic": {
+          "durationSec": 1800
+        },
+        "window": "WORK",
+        "today": "2026-09-10",
+        "lastSentDate": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "早间简报",
+        "body": "5°C ☁️ 阴 · L1 07:15 正点 · 预计用时 30 分钟",
+        "newLastSentDate": "2026-09-10"
+      }
+    },
+    {
+      "name": "延误分钟数体现在正文中",
+      "from": [
+        "MorningBriefPolicyTest.delayed leg shows delay minutes in the body"
+      ],
+      "input": {
+        "weather": {
+          "temperature": 5.0,
+          "symbolCode": "cloudy"
+        },
+        "train": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-10T07:15:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 12
+              }
+            ]
+          }
+        },
+        "traffic": {
+          "durationSec": 1800
+        },
+        "window": "WORK",
+        "today": "2026-09-10",
+        "lastSentDate": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "早间简报",
+        "body": "5°C ☁️ 阴 · L1 07:15 延误 12 分钟 · 预计用时 30 分钟",
+        "newLastSentDate": "2026-09-10"
+      }
+    },
+    {
+      "name": "取消状态体现在正文中",
+      "from": [
+        "MorningBriefPolicyTest.cancelled leg shows cancelled status in the body"
+      ],
+      "input": {
+        "weather": {
+          "temperature": 5.0,
+          "symbolCode": "cloudy"
+        },
+        "train": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-10T07:15:00+02:00",
+                "cancelled": true,
+                "delayKnown": true,
+                "delayMin": 0
+              }
+            ]
+          }
+        },
+        "traffic": {
+          "durationSec": 1800
+        },
+        "window": "WORK",
+        "today": "2026-09-10",
+        "lastSentDate": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "早间简报",
+        "body": "5°C ☁️ 阴 · L1 07:15 已取消 · 预计用时 30 分钟",
+        "newLastSentDate": "2026-09-10"
+      }
+    },
+    {
+      "name": "路况用时以整分钟展示",
+      "from": [
+        "MorningBriefPolicyTest.traffic duration is expressed in whole minutes in the body"
+      ],
+      "input": {
+        "weather": {
+          "temperature": 5.0,
+          "symbolCode": "cloudy"
+        },
+        "train": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-10T07:15:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 0
+              }
+            ]
+          }
+        },
+        "traffic": {
+          "durationSec": 1800
+        },
+        "window": "WORK",
+        "today": "2026-09-10",
+        "lastSentDate": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "早间简报",
+        "body": "5°C ☁️ 阴 · L1 07:15 正点 · 预计用时 30 分钟",
+        "newLastSentDate": "2026-09-10"
+      }
+    },
+    {
+      "name": "气温 -0.5 按向零截断输出 0°C",
+      "from": [],
+      "input": {
+        "weather": {
+          "temperature": -0.5,
+          "symbolCode": "cloudy"
+        },
+        "train": null,
+        "traffic": null,
+        "window": "WORK",
+        "today": "2026-09-10",
+        "lastSentDate": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "早间简报",
+        "body": "0°C ☁️ 阴 · 暂无数据 · 暂无数据",
+        "newLastSentDate": "2026-09-10"
+      }
+    },
+    {
+      "name": "工作方案第一段实时未知（delayKnown 为 false）显示实时未知",
+      "from": [],
+      "input": {
+        "weather": {
+          "temperature": 5.0,
+          "symbolCode": "cloudy"
+        },
+        "train": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-10T07:15:00+02:00",
+                "cancelled": false,
+                "delayKnown": false,
+                "delayMin": 0
+              }
+            ]
+          }
+        },
+        "traffic": {
+          "durationSec": 1800
+        },
+        "window": "WORK",
+        "today": "2026-09-10",
+        "lastSentDate": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "早间简报",
+        "body": "5°C ☁️ 阴 · L1 07:15 实时未知 · 预计用时 30 分钟",
+        "newLastSentDate": "2026-09-10"
+      }
+    },
+    {
+      "name": "delayKnown 为 true 且 delayMin 为 4 时仍显示正点（阈值 5 分钟）",
+      "from": [],
+      "input": {
+        "weather": {
+          "temperature": 5.0,
+          "symbolCode": "cloudy"
+        },
+        "train": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-10T07:15:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 4
+              }
+            ]
+          }
+        },
+        "traffic": {
+          "durationSec": 1800
+        },
+        "window": "WORK",
+        "today": "2026-09-10",
+        "lastSentDate": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "早间简报",
+        "body": "5°C ☁️ 阴 · L1 07:15 正点 · 预计用时 30 分钟",
+        "newLastSentDate": "2026-09-10"
+      }
+    },
+    {
+      "name": "气温 5.7 向零截断为 5°C",
+      "from": [],
+      "input": {
+        "weather": {
+          "temperature": 5.7,
+          "symbolCode": "cloudy"
+        },
+        "train": null,
+        "traffic": null,
+        "window": "WORK",
+        "today": "2026-09-10",
+        "lastSentDate": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "早间简报",
+        "body": "5°C ☁️ 阴 · 暂无数据 · 暂无数据",
+        "newLastSentDate": "2026-09-10"
+      }
+    },
+    {
+      "name": "气温 -3.7 向零截断为 -3°C",
+      "from": [],
+      "input": {
+        "weather": {
+          "temperature": -3.7,
+          "symbolCode": "cloudy"
+        },
+        "train": null,
+        "traffic": null,
+        "window": "WORK",
+        "today": "2026-09-10",
+        "lastSentDate": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "早间简报",
+        "body": "-3°C ☁️ 阴 · 暂无数据 · 暂无数据",
+        "newLastSentDate": "2026-09-10"
+      }
+    }
+  ]
+}

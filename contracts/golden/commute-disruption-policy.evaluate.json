@@ -1,0 +1,992 @@
+{
+  "subject": "CommuteDisruptionPolicy.evaluate",
+  "kotlin": "app/src/main/java/com/personalassistant/app/domain/CommuteDisruptionPolicy.kt",
+  "cases": [
+    {
+      "name": "窗口外不通知，指纹原样透传",
+      "from": [
+        "CommuteDisruptionPolicyTest.outside window never notifies even with a cancelled leg",
+        "CommuteDisruptionPolicyTest.outside window leaves previous fingerprint untouched"
+      ],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-09T08:00:00+02:00",
+                "cancelled": true,
+                "delayKnown": true,
+                "delayMin": 0
+              }
+            ]
+          }
+        },
+        "window": "OUTSIDE",
+        "previousFingerprint": "some-fingerprint"
+      },
+      "expected": {
+        "shouldNotify": false,
+        "title": "",
+        "body": "",
+        "newFingerprint": "some-fingerprint"
+      }
+    },
+    {
+      "name": "没有异常段不通知",
+      "from": [
+        "CommuteDisruptionPolicyTest.no disrupted legs does not notify"
+      ],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-09T08:00:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 0
+              },
+              {
+                "line": "L1",
+                "depTime": "2026-09-09T08:00:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 2
+              }
+            ]
+          }
+        },
+        "window": "WORK",
+        "previousFingerprint": null
+      },
+      "expected": {
+        "shouldNotify": false,
+        "title": "",
+        "body": "",
+        "newFingerprint": null
+      }
+    },
+    {
+      "name": "首次取消触发通知",
+      "from": [
+        "CommuteDisruptionPolicyTest.first time a leg is cancelled notifies"
+      ],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-09T08:00:00+02:00",
+                "cancelled": true,
+                "delayKnown": true,
+                "delayMin": 0
+              }
+            ]
+          }
+        },
+        "window": "WORK",
+        "previousFingerprint": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "上班列车异常",
+        "body": "L1 08:00 已取消",
+        "newFingerprint": "2026-09-09#L1##true#0"
+      }
+    },
+    {
+      "name": "RETURN 窗口使用回家方案",
+      "from": [
+        "CommuteDisruptionPolicyTest.RETURN window uses the home plan, not work"
+      ],
+      "input": {
+        "status": {
+          "home": {
+            "legs": [
+              {
+                "line": "R14",
+                "depTime": "2026-09-09T08:00:00+02:00",
+                "cancelled": true,
+                "delayKnown": true,
+                "delayMin": 0
+              }
+            ]
+          }
+        },
+        "window": "RETURN",
+        "previousFingerprint": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "回家列车异常",
+        "body": "R14 08:00 已取消",
+        "newFingerprint": "2026-09-09#R14##true#0"
+      }
+    },
+    {
+      "name": "同一异常下次不再通知",
+      "from": [
+        "CommuteDisruptionPolicyTest.same disruption on next poll does not notify again"
+      ],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-09T08:00:00+02:00",
+                "cancelled": true,
+                "delayKnown": true,
+                "delayMin": 0
+              }
+            ]
+          }
+        },
+        "window": "WORK",
+        "previousFingerprint": "2026-09-09#L1##true#0"
+      },
+      "expected": {
+        "shouldNotify": false,
+        "title": "",
+        "body": "",
+        "newFingerprint": "2026-09-09#L1##true#0"
+      }
+    },
+    {
+      "name": "延误从 5 分钟恶化到 15 分钟：首次通知",
+      "from": [
+        "CommuteDisruptionPolicyTest.disruption severity change (5min to 15min delay) notifies again"
+      ],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-09T08:00:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 5
+              }
+            ]
+          }
+        },
+        "window": "WORK",
+        "previousFingerprint": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "上班列车异常",
+        "body": "L1 08:00 延误 5 分钟",
+        "newFingerprint": "2026-09-09#L1##false#5"
+      }
+    },
+    {
+      "name": "延误从 5 分钟恶化到 15 分钟：严重恶化后重新通知",
+      "from": [
+        "CommuteDisruptionPolicyTest.disruption severity change (5min to 15min delay) notifies again"
+      ],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-09T08:00:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 15
+              }
+            ]
+          }
+        },
+        "window": "WORK",
+        "previousFingerprint": "2026-09-09#L1##false#5"
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "上班列车异常",
+        "body": "L1 08:00 延误 15 分钟",
+        "newFingerprint": "2026-09-09#L1##false#10"
+      }
+    },
+    {
+      "name": "延误 4 分钟未达阈值不算异常",
+      "from": [
+        "CommuteDisruptionPolicyTest.delay just under threshold (4min) does not count as disrupted"
+      ],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-09T08:00:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 4
+              }
+            ]
+          }
+        },
+        "window": "WORK",
+        "previousFingerprint": null
+      },
+      "expected": {
+        "shouldNotify": false,
+        "title": "",
+        "body": "",
+        "newFingerprint": null
+      }
+    },
+    {
+      "name": "延误恰好 5 分钟达到阈值",
+      "from": [
+        "CommuteDisruptionPolicyTest.delay exactly at threshold (5min) counts as disrupted"
+      ],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-09T08:00:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 5
+              }
+            ]
+          }
+        },
+        "window": "WORK",
+        "previousFingerprint": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "上班列车异常",
+        "body": "L1 08:00 延误 5 分钟",
+        "newFingerprint": "2026-09-09#L1##false#5"
+      }
+    },
+    {
+      "name": "异常恢复后指纹清空",
+      "from": [
+        "CommuteDisruptionPolicyTest.disruption clearing resets fingerprint so the same disruption notifies again later"
+      ],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-09T08:00:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 0
+              }
+            ]
+          }
+        },
+        "window": "WORK",
+        "previousFingerprint": "2026-09-09#L1##true#0"
+      },
+      "expected": {
+        "shouldNotify": false,
+        "title": "",
+        "body": "",
+        "newFingerprint": null
+      }
+    },
+    {
+      "name": "指纹清空后同样的取消再次出现会重新通知",
+      "from": [
+        "CommuteDisruptionPolicyTest.disruption clearing resets fingerprint so the same disruption notifies again later"
+      ],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-09T08:00:00+02:00",
+                "cancelled": true,
+                "delayKnown": true,
+                "delayMin": 0
+              }
+            ]
+          }
+        },
+        "window": "WORK",
+        "previousFingerprint": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "上班列车异常",
+        "body": "L1 08:00 已取消",
+        "newFingerprint": "2026-09-09#L1##true#0"
+      }
+    },
+    {
+      "name": "delayKnown 为 false 时大延误不算异常",
+      "from": [
+        "CommuteDisruptionPolicyTest.unknown delay (delayKnown false) is not treated as a disruption even with a large delayMin value"
+      ],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-09T08:00:00+02:00",
+                "cancelled": false,
+                "delayKnown": false,
+                "delayMin": 30
+              }
+            ]
+          }
+        },
+        "window": "WORK",
+        "previousFingerprint": null
+      },
+      "expected": {
+        "shouldNotify": false,
+        "title": "",
+        "body": "",
+        "newFingerprint": null
+      }
+    },
+    {
+      "name": "取消即使 delayKnown 为 false 仍算异常",
+      "from": [
+        "CommuteDisruptionPolicyTest.cancelled leg still counts as disrupted even when delayKnown is false"
+      ],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "08:00",
+                "cancelled": true,
+                "delayKnown": false,
+                "delayMin": 0
+              }
+            ]
+          }
+        },
+        "window": "WORK",
+        "previousFingerprint": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "上班列车异常",
+        "body": "L1 --:-- 已取消",
+        "newFingerprint": "08:00#L1##true#-1"
+      }
+    },
+    {
+      "name": "多段行程中任一段异常即触发通知",
+      "from": [
+        "CommuteDisruptionPolicyTest.any disrupted leg among multiple legs triggers notification"
+      ],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "08:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 0
+              },
+              {
+                "line": "R14",
+                "depTime": "08:20",
+                "cancelled": true,
+                "delayKnown": true,
+                "delayMin": 0
+              }
+            ]
+          }
+        },
+        "window": "WORK",
+        "previousFingerprint": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "上班列车异常",
+        "body": "R14 --:-- 已取消",
+        "newFingerprint": "08:20#R14##true#0"
+      }
+    },
+    {
+      "name": "延误在同一档位内漂移不重复通知：首次 6 分钟",
+      "from": [
+        "CommuteDisruptionPolicyTest.delay drifting within the same bucket does not notify again"
+      ],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-09T08:06:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 6
+              }
+            ]
+          }
+        },
+        "window": "WORK",
+        "previousFingerprint": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "上班列车异常",
+        "body": "L1 08:06 延误 6 分钟",
+        "newFingerprint": "2026-09-09#L1##false#5"
+      }
+    },
+    {
+      "name": "延误在同一档位内漂移不重复通知：漂移到 8 分钟仍同档",
+      "from": [
+        "CommuteDisruptionPolicyTest.delay drifting within the same bucket does not notify again"
+      ],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-09T08:08:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 8
+              }
+            ]
+          }
+        },
+        "window": "WORK",
+        "previousFingerprint": "2026-09-09#L1##false#5"
+      },
+      "expected": {
+        "shouldNotify": false,
+        "title": "",
+        "body": "",
+        "newFingerprint": "2026-09-09#L1##false#5"
+      }
+    },
+    {
+      "name": "延误跨档恶化重新通知：首次 6 分钟",
+      "from": [
+        "CommuteDisruptionPolicyTest.delay crossing into a worse bucket notifies again"
+      ],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-09T08:06:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 6
+              }
+            ]
+          }
+        },
+        "window": "WORK",
+        "previousFingerprint": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "上班列车异常",
+        "body": "L1 08:06 延误 6 分钟",
+        "newFingerprint": "2026-09-09#L1##false#5"
+      }
+    },
+    {
+      "name": "延误跨档恶化重新通知：25 分钟触发新通知",
+      "from": [
+        "CommuteDisruptionPolicyTest.delay crossing into a worse bucket notifies again"
+      ],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-09T08:25:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 25
+              }
+            ]
+          }
+        },
+        "window": "WORK",
+        "previousFingerprint": "2026-09-09#L1##false#5"
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "上班列车异常",
+        "body": "L1 08:25 延误 25 分钟",
+        "newFingerprint": "2026-09-09#L1##false#20"
+      }
+    },
+    {
+      "name": "次日同样延误重新通知：前一天",
+      "from": [
+        "CommuteDisruptionPolicyTest.the same disruption on the next day notifies again"
+      ],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-09T08:06:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 6
+              }
+            ]
+          }
+        },
+        "window": "WORK",
+        "previousFingerprint": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "上班列车异常",
+        "body": "L1 08:06 延误 6 分钟",
+        "newFingerprint": "2026-09-09#L1##false#5"
+      }
+    },
+    {
+      "name": "次日同样延误重新通知：第二天",
+      "from": [
+        "CommuteDisruptionPolicyTest.the same disruption on the next day notifies again"
+      ],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-10T08:06:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 6
+              }
+            ]
+          }
+        },
+        "window": "WORK",
+        "previousFingerprint": "2026-09-09#L1##false#5"
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "上班列车异常",
+        "body": "L1 08:06 延误 6 分钟",
+        "newFingerprint": "2026-09-10#L1##false#5"
+      }
+    },
+    {
+      "name": "正文展示可读时刻而非原始 ISO",
+      "from": [
+        "CommuteDisruptionPolicyTest.notification body shows a human readable clock time not a raw iso string"
+      ],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-09T08:06:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 6
+              }
+            ]
+          }
+        },
+        "window": "WORK",
+        "previousFingerprint": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "上班列车异常",
+        "body": "L1 08:06 延误 6 分钟",
+        "newFingerprint": "2026-09-09#L1##false#5"
+      }
+    },
+    {
+      "name": "延误档位边界 9→10 分钟触发重新通知",
+      "from": [],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-09T08:00:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 10
+              }
+            ]
+          }
+        },
+        "window": "WORK",
+        "previousFingerprint": "2026-09-09#L1##false#5"
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "上班列车异常",
+        "body": "L1 08:00 延误 10 分钟",
+        "newFingerprint": "2026-09-09#L1##false#10"
+      }
+    },
+    {
+      "name": "延误档位边界 19→20 分钟触发重新通知",
+      "from": [],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-09T08:00:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 20
+              }
+            ]
+          }
+        },
+        "window": "WORK",
+        "previousFingerprint": "2026-09-09#L1##false#10"
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "上班列车异常",
+        "body": "L1 08:00 延误 20 分钟",
+        "newFingerprint": "2026-09-09#L1##false#20"
+      }
+    },
+    {
+      "name": "延误档位边界 29→30 分钟触发重新通知",
+      "from": [],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-09T08:00:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 30
+              }
+            ]
+          }
+        },
+        "window": "WORK",
+        "previousFingerprint": "2026-09-09#L1##false#20"
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "上班列车异常",
+        "body": "L1 08:00 延误 30 分钟",
+        "newFingerprint": "2026-09-09#L1##false#30"
+      }
+    },
+    {
+      "name": "延误档位边界 44→45 分钟触发重新通知",
+      "from": [],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-09T08:00:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 45
+              }
+            ]
+          }
+        },
+        "window": "WORK",
+        "previousFingerprint": "2026-09-09#L1##false#30"
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "上班列车异常",
+        "body": "L1 08:00 延误 45 分钟",
+        "newFingerprint": "2026-09-09#L1##false#45"
+      }
+    },
+    {
+      "name": "延误档位边界 59→60 分钟触发重新通知",
+      "from": [],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-09T08:00:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 60
+              }
+            ]
+          }
+        },
+        "window": "WORK",
+        "previousFingerprint": "2026-09-09#L1##false#45"
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "上班列车异常",
+        "body": "L1 08:00 延误 60 分钟",
+        "newFingerprint": "2026-09-09#L1##false#60"
+      }
+    },
+    {
+      "name": "延误档位下侧边界 9 分钟落入 5 档",
+      "from": [],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-09T08:00:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 9
+              }
+            ]
+          }
+        },
+        "window": "WORK",
+        "previousFingerprint": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "上班列车异常",
+        "body": "L1 08:00 延误 9 分钟",
+        "newFingerprint": "2026-09-09#L1##false#5"
+      }
+    },
+    {
+      "name": "延误档位下侧边界 19 分钟落入 10 档",
+      "from": [],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-09T08:00:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 19
+              }
+            ]
+          }
+        },
+        "window": "WORK",
+        "previousFingerprint": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "上班列车异常",
+        "body": "L1 08:00 延误 19 分钟",
+        "newFingerprint": "2026-09-09#L1##false#10"
+      }
+    },
+    {
+      "name": "延误档位下侧边界 29 分钟落入 20 档",
+      "from": [],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-09T08:00:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 29
+              }
+            ]
+          }
+        },
+        "window": "WORK",
+        "previousFingerprint": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "上班列车异常",
+        "body": "L1 08:00 延误 29 分钟",
+        "newFingerprint": "2026-09-09#L1##false#20"
+      }
+    },
+    {
+      "name": "延误档位下侧边界 44 分钟落入 30 档",
+      "from": [],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-09T08:00:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 44
+              }
+            ]
+          }
+        },
+        "window": "WORK",
+        "previousFingerprint": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "上班列车异常",
+        "body": "L1 08:00 延误 44 分钟",
+        "newFingerprint": "2026-09-09#L1##false#30"
+      }
+    },
+    {
+      "name": "延误档位下侧边界 59 分钟落入 45 档",
+      "from": [],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-09T08:00:00+02:00",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 59
+              }
+            ]
+          }
+        },
+        "window": "WORK",
+        "previousFingerprint": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "上班列车异常",
+        "body": "L1 08:00 延误 59 分钟",
+        "newFingerprint": "2026-09-09#L1##false#45"
+      }
+    },
+    {
+      "name": "一段取消，指纹钉住 fromName 段",
+      "from": [],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-09T08:00:00+02:00",
+                "fromName": "Spikkestad",
+                "toName": "Asker",
+                "cancelled": true,
+                "delayKnown": true,
+                "delayMin": 0
+              }
+            ]
+          }
+        },
+        "window": "WORK",
+        "previousFingerprint": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "上班列车异常",
+        "body": "L1 08:00 已取消",
+        "newFingerprint": "2026-09-09#L1#Spikkestad#true#0"
+      }
+    },
+    {
+      "name": "两段同时异常：一段取消、一段延误 12 分钟",
+      "from": [],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-09T08:00:00+02:00",
+                "fromName": "Spikkestad",
+                "cancelled": true,
+                "delayKnown": true,
+                "delayMin": 0
+              },
+              {
+                "line": "R14",
+                "depTime": "2026-09-09T08:20:00+02:00",
+                "fromName": "Asker",
+                "cancelled": false,
+                "delayKnown": true,
+                "delayMin": 12
+              }
+            ]
+          }
+        },
+        "window": "WORK",
+        "previousFingerprint": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "上班列车异常",
+        "body": "L1 08:00 已取消；R14 08:20 延误 12 分钟",
+        "newFingerprint": "2026-09-09#L1#Spikkestad#true#0|2026-09-09#R14#Asker#false#10"
+      }
+    },
+    {
+      "name": "depTime 为空且已取消：正文显示 --:--，指纹日期为 ?",
+      "from": [],
+      "input": {
+        "status": {
+          "work": {
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "",
+                "cancelled": true,
+                "delayKnown": true,
+                "delayMin": 0
+              }
+            ]
+          }
+        },
+        "window": "WORK",
+        "previousFingerprint": null
+      },
+      "expected": {
+        "shouldNotify": true,
+        "title": "上班列车异常",
+        "body": "L1 --:-- 已取消",
+        "newFingerprint": "?#L1##true#0"
+      }
+    }
+  ]
+}

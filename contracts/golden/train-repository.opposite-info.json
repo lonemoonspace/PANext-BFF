@@ -1,0 +1,458 @@
+{
+  "subject": "TrainRepository.oppositeInfo",
+  "kotlin": "app/src/main/java/com/personalassistant/app/data/train/TrainRepository.kt",
+  "cases": [
+    {
+      "name": "对向车取消：CANCELLED",
+      "from": [
+        "TrainRepositoryOppositeTest.opposite train cancelled reports CANCELLED"
+      ],
+      "input": {
+        "calls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-09-10T08:12:00+02:00",
+            "expectedDepartureTime": "2026-09-10T08:12:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Lillestrøm"
+            },
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              }
+            }
+          },
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-09-10T08:10:00+02:00",
+            "expectedDepartureTime": "2026-09-10T08:10:00+02:00",
+            "cancellation": true,
+            "destinationDisplay": {
+              "frontText": "Spikkestad"
+            },
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              }
+            }
+          }
+        ],
+        "trainIndex": 0
+      },
+      "expected": {
+        "state": "CANCELLED",
+        "text": "对向 L1（Spikkestad 方向）08:10 已取消，单线区段可能受影响"
+      }
+    },
+    {
+      "name": "对向车延误 7 分钟：文案含分钟数与 HH:mm 时刻",
+      "from": [
+        "TrainRepositoryOppositeTest.opposite train delayed 7 minutes reports DELAYED with minute count",
+        "TrainRepositoryOppositeTest.opposite text shows HH-mm clock time not raw ISO"
+      ],
+      "input": {
+        "calls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-09-10T08:12:00+02:00",
+            "expectedDepartureTime": "2026-09-10T08:12:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Lillestrøm"
+            },
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              }
+            }
+          },
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-09-10T08:10:00+02:00",
+            "expectedDepartureTime": "2026-09-10T08:17:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Spikkestad"
+            },
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              }
+            }
+          }
+        ],
+        "trainIndex": 0
+      },
+      "expected": {
+        "state": "DELAYED",
+        "text": "对向 L1（Spikkestad 方向）08:17 延误 7 分钟，单线区段可能连带延误，请预留时间"
+      }
+    },
+    {
+      "name": "对向车正点：非空文案",
+      "from": [
+        "TrainRepositoryOppositeTest.opposite train on time reports ON_TIME with non-blank text"
+      ],
+      "input": {
+        "calls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-09-10T08:12:00+02:00",
+            "expectedDepartureTime": "2026-09-10T08:12:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Lillestrøm"
+            },
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              }
+            }
+          },
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-09-10T08:10:00+02:00",
+            "expectedDepartureTime": "2026-09-10T08:10:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Spikkestad"
+            },
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              }
+            }
+          }
+        ],
+        "trainIndex": 0
+      },
+      "expected": {
+        "state": "ON_TIME",
+        "text": "对向 L1（Spikkestad 方向）08:10 正点"
+      }
+    },
+    {
+      "name": "对向车无实时数据：UNKNOWN 而非正点",
+      "from": [
+        "TrainRepositoryOppositeTest.opposite train without realtime data reports UNKNOWN not ON_TIME"
+      ],
+      "input": {
+        "calls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-09-10T08:12:00+02:00",
+            "expectedDepartureTime": "2026-09-10T08:12:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Lillestrøm"
+            },
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              }
+            }
+          },
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-10T08:10:00+02:00",
+            "expectedDepartureTime": null,
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Spikkestad"
+            },
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              }
+            }
+          }
+        ],
+        "trainIndex": 0
+      },
+      "expected": {
+        "state": "UNKNOWN",
+        "text": "对向 L1（Spikkestad 方向）08:10 暂无实时数据，单线区段影响未知"
+      }
+    },
+    {
+      "name": "列表里没有对向车次：NONE 且文案为空",
+      "from": [
+        "TrainRepositoryOppositeTest.no opposite-direction call in the list reports NONE with blank text"
+      ],
+      "input": {
+        "calls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-09-10T08:12:00+02:00",
+            "expectedDepartureTime": "2026-09-10T08:12:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Lillestrøm"
+            },
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              }
+            }
+          },
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-09-10T08:32:00+02:00",
+            "expectedDepartureTime": "2026-09-10T08:32:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Lillestrøm"
+            },
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              }
+            }
+          }
+        ],
+        "trainIndex": 0
+      },
+      "expected": {
+        "state": "NONE",
+        "text": ""
+      }
+    },
+    {
+      "name": "train 为 null：NONE",
+      "from": [
+        "TrainRepositoryOppositeTest.null train reports NONE"
+      ],
+      "input": {
+        "calls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-09-10T08:12:00+02:00",
+            "expectedDepartureTime": "2026-09-10T08:12:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Lillestrøm"
+            },
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              }
+            }
+          }
+        ],
+        "trainIndex": null
+      },
+      "expected": {
+        "state": "NONE",
+        "text": ""
+      }
+    },
+    {
+      "name": "多个候选取计划时刻最近的一个",
+      "from": [
+        "TrainRepositoryOppositeTest.picks the opposite candidate with the closest aimed time"
+      ],
+      "input": {
+        "calls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-09-10T08:12:00+02:00",
+            "expectedDepartureTime": "2026-09-10T08:12:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Lillestrøm"
+            },
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              }
+            }
+          },
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-09-10T07:40:00+02:00",
+            "expectedDepartureTime": "2026-09-10T07:40:00+02:00",
+            "cancellation": true,
+            "destinationDisplay": {
+              "frontText": "Spikkestad"
+            },
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              }
+            }
+          },
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-09-10T08:15:00+02:00",
+            "expectedDepartureTime": "2026-09-10T08:22:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Spikkestad"
+            },
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              }
+            }
+          }
+        ],
+        "trainIndex": 0
+      },
+      "expected": {
+        "state": "DELAYED",
+        "text": "对向 L1（Spikkestad 方向）08:22 延误 7 分钟，单线区段可能连带延误，请预留时间"
+      }
+    },
+    {
+      "name": "目的地文本为空的候选被排除，即使计划时刻更近",
+      "from": [],
+      "input": {
+        "calls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-09-10T08:12:00+02:00",
+            "expectedDepartureTime": "2026-09-10T08:12:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Lillestrøm"
+            },
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              }
+            }
+          },
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-09-10T08:12:00+02:00",
+            "expectedDepartureTime": "2026-09-10T08:12:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": ""
+            },
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              }
+            }
+          },
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-09-10T08:30:00+02:00",
+            "expectedDepartureTime": "2026-09-10T08:30:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Spikkestad"
+            },
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              }
+            }
+          }
+        ],
+        "trainIndex": 0
+      },
+      "expected": {
+        "state": "ON_TIME",
+        "text": "对向 L1（Spikkestad 方向）08:30 正点"
+      }
+    },
+    {
+      "name": "计划时刻并列时取列表中先出现的候选",
+      "from": [],
+      "input": {
+        "calls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-09-10T08:12:00+02:00",
+            "expectedDepartureTime": "2026-09-10T08:12:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Lillestrøm"
+            },
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              }
+            }
+          },
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-09-10T08:17:00+02:00",
+            "expectedDepartureTime": "2026-09-10T08:17:00+02:00",
+            "cancellation": true,
+            "destinationDisplay": {
+              "frontText": "Spikkestad"
+            },
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              }
+            }
+          },
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-09-10T08:07:00+02:00",
+            "expectedDepartureTime": "2026-09-10T08:07:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Spikkestad"
+            },
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              }
+            }
+          }
+        ],
+        "trainIndex": 0
+      },
+      "expected": {
+        "state": "CANCELLED",
+        "text": "对向 L1（Spikkestad 方向）08:17 已取消，单线区段可能受影响"
+      }
+    }
+  ]
+}

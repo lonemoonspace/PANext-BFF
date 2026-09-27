@@ -1,0 +1,2006 @@
+{
+  "subject": "WatchedLinePolicy.status",
+  "kotlin": "app/src/main/java/com/personalassistant/app/domain/WatchedLinePolicy.kt",
+  "cases": [
+    {
+      "name": "区间车只开到中途、不经过 B 的班次被排除，只保留真正到达 B 的班次",
+      "from": [
+        "WatchedLinePolicyTest.board keeps only departures whose quay sequence actually reaches B"
+      ],
+      "input": {
+        "config": {
+          "lineCode": "42",
+          "stopA": {
+            "id": "NSR:StopPlace:90001",
+            "name": "Alpha"
+          },
+          "stopB": {
+            "id": "NSR:StopPlace:90002",
+            "name": "Beta"
+          }
+        },
+        "callsA": [
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T08:07:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Mid"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90003"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T08:17:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Mid"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90003"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T08:57:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90003"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "callsB": [],
+        "now": "2026-09-22T08:00:00+02:00"
+      },
+      "expected": {
+        "boards": [
+          {
+            "boardStop": "Alpha",
+            "towardStop": "Beta",
+            "departures": [
+              {
+                "depTime": "2026-09-22T08:57:00+02:00",
+                "destName": "Beta",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": false
+              }
+            ]
+          },
+          {
+            "boardStop": "Beta",
+            "towardStop": "Alpha",
+            "departures": []
+          }
+        ],
+        "updatedAt": "2026-01-01T00:00:00+01:00",
+        "lineCode": "42"
+      }
+    },
+    {
+      "name": "站序里 B 在 A 之前的反向班次被排除",
+      "from": [
+        "Bus280PolicyTest.a board never picks up departures heading the other way"
+      ],
+      "input": {
+        "config": {
+          "lineCode": "42",
+          "stopA": {
+            "id": "NSR:StopPlace:90001",
+            "name": "Alpha"
+          },
+          "stopB": {
+            "id": "NSR:StopPlace:90002",
+            "name": "Beta"
+          }
+        },
+        "callsA": [
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T08:07:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Alpha"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90003"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "callsB": [],
+        "now": "2026-09-22T08:00:00+02:00"
+      },
+      "expected": {
+        "boards": [
+          {
+            "boardStop": "Alpha",
+            "towardStop": "Beta",
+            "departures": []
+          },
+          {
+            "boardStop": "Beta",
+            "towardStop": "Alpha",
+            "departures": []
+          }
+        ],
+        "updatedAt": "2026-01-01T00:00:00+01:00",
+        "lineCode": "42"
+      }
+    },
+    {
+      "name": "B 站保留开往 A 的班次",
+      "from": [
+        "WatchedLinePolicyTest.board keeps B-bound departures in the reverse direction"
+      ],
+      "input": {
+        "config": {
+          "lineCode": "42",
+          "stopA": {
+            "id": "NSR:StopPlace:90001",
+            "name": "Alpha"
+          },
+          "stopB": {
+            "id": "NSR:StopPlace:90002",
+            "name": "Beta"
+          }
+        },
+        "callsA": [],
+        "callsB": [
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T08:29:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Alpha"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90003"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T09:29:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Alpha"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90003"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "now": "2026-09-22T08:00:00+02:00"
+      },
+      "expected": {
+        "boards": [
+          {
+            "boardStop": "Alpha",
+            "towardStop": "Beta",
+            "departures": []
+          },
+          {
+            "boardStop": "Beta",
+            "towardStop": "Alpha",
+            "departures": [
+              {
+                "depTime": "2026-09-22T08:29:00+02:00",
+                "destName": "Alpha",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": false
+              },
+              {
+                "depTime": "2026-09-22T09:29:00+02:00",
+                "destName": "Alpha",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": false
+              }
+            ]
+          }
+        ],
+        "updatedAt": "2026-01-01T00:00:00+01:00",
+        "lineCode": "42"
+      }
+    },
+    {
+      "name": "线路号不同的班次被过滤，即使经过 B",
+      "from": [
+        "Bus280PolicyTest.board filters by line code, not just by destination"
+      ],
+      "input": {
+        "config": {
+          "lineCode": "42",
+          "stopA": {
+            "id": "NSR:StopPlace:90001",
+            "name": "Alpha"
+          },
+          "stopB": {
+            "id": "NSR:StopPlace:90002",
+            "name": "Beta"
+          }
+        },
+        "callsA": [
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T08:05:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "99"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T08:06:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "rail",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T08:57:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "callsB": [],
+        "now": "2026-09-22T08:00:00+02:00"
+      },
+      "expected": {
+        "boards": [
+          {
+            "boardStop": "Alpha",
+            "towardStop": "Beta",
+            "departures": [
+              {
+                "depTime": "2026-09-22T08:57:00+02:00",
+                "destName": "Beta",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": false
+              }
+            ]
+          },
+          {
+            "boardStop": "Beta",
+            "towardStop": "Alpha",
+            "departures": []
+          }
+        ],
+        "updatedAt": "2026-01-01T00:00:00+01:00",
+        "lineCode": "42"
+      }
+    },
+    {
+      "name": "已发车的班次被剔除，恰好此刻发车的保留",
+      "from": [
+        "Bus280PolicyTest.board drops departures that already left and keeps one departing exactly now"
+      ],
+      "input": {
+        "config": {
+          "lineCode": "42",
+          "stopA": {
+            "id": "NSR:StopPlace:90001",
+            "name": "Alpha"
+          },
+          "stopB": {
+            "id": "NSR:StopPlace:90002",
+            "name": "Beta"
+          }
+        },
+        "callsA": [
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T07:57:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T08:00:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T08:30:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "callsB": [],
+        "now": "2026-09-22T08:00:00+02:00"
+      },
+      "expected": {
+        "boards": [
+          {
+            "boardStop": "Alpha",
+            "towardStop": "Beta",
+            "departures": [
+              {
+                "depTime": "2026-09-22T08:00:00+02:00",
+                "destName": "Beta",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": false
+              },
+              {
+                "depTime": "2026-09-22T08:30:00+02:00",
+                "destName": "Beta",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": false
+              }
+            ]
+          },
+          {
+            "boardStop": "Beta",
+            "towardStop": "Alpha",
+            "departures": []
+          }
+        ],
+        "updatedAt": "2026-01-01T00:00:00+01:00",
+        "lineCode": "42"
+      }
+    },
+    {
+      "name": "按发车时间升序排序，不管输入顺序",
+      "from": [
+        "Bus280PolicyTest.board sorts by departure time regardless of input order"
+      ],
+      "input": {
+        "config": {
+          "lineCode": "42",
+          "stopA": {
+            "id": "NSR:StopPlace:90001",
+            "name": "Alpha"
+          },
+          "stopB": {
+            "id": "NSR:StopPlace:90002",
+            "name": "Beta"
+          }
+        },
+        "callsA": [
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T09:57:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T08:27:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T08:57:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "callsB": [],
+        "now": "2026-09-22T08:00:00+02:00"
+      },
+      "expected": {
+        "boards": [
+          {
+            "boardStop": "Alpha",
+            "towardStop": "Beta",
+            "departures": [
+              {
+                "depTime": "2026-09-22T08:27:00+02:00",
+                "destName": "Beta",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": false
+              },
+              {
+                "depTime": "2026-09-22T08:57:00+02:00",
+                "destName": "Beta",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": false
+              },
+              {
+                "depTime": "2026-09-22T09:57:00+02:00",
+                "destName": "Beta",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": false
+              }
+            ]
+          },
+          {
+            "boardStop": "Beta",
+            "towardStop": "Alpha",
+            "departures": []
+          }
+        ],
+        "updatedAt": "2026-01-01T00:00:00+01:00",
+        "lineCode": "42"
+      }
+    },
+    {
+      "name": "每个方向最多保留 FETCH_LIMIT 班",
+      "from": [
+        "Bus280PolicyTest.board keeps at most FETCH_LIMIT departures"
+      ],
+      "input": {
+        "config": {
+          "lineCode": "42",
+          "stopA": {
+            "id": "NSR:StopPlace:90001",
+            "name": "Alpha"
+          },
+          "stopB": {
+            "id": "NSR:StopPlace:90002",
+            "name": "Beta"
+          }
+        },
+        "callsA": [
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T08:00:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T08:05:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T08:10:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T08:15:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T08:20:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T08:25:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T08:30:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T08:35:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T08:40:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T08:45:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "callsB": [],
+        "now": "2026-09-22T08:00:00+02:00"
+      },
+      "expected": {
+        "boards": [
+          {
+            "boardStop": "Alpha",
+            "towardStop": "Beta",
+            "departures": [
+              {
+                "depTime": "2026-09-22T08:00:00+02:00",
+                "destName": "Beta",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": false
+              },
+              {
+                "depTime": "2026-09-22T08:05:00+02:00",
+                "destName": "Beta",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": false
+              },
+              {
+                "depTime": "2026-09-22T08:10:00+02:00",
+                "destName": "Beta",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": false
+              },
+              {
+                "depTime": "2026-09-22T08:15:00+02:00",
+                "destName": "Beta",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": false
+              },
+              {
+                "depTime": "2026-09-22T08:20:00+02:00",
+                "destName": "Beta",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": false
+              },
+              {
+                "depTime": "2026-09-22T08:25:00+02:00",
+                "destName": "Beta",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": false
+              }
+            ]
+          },
+          {
+            "boardStop": "Beta",
+            "towardStop": "Alpha",
+            "departures": []
+          }
+        ],
+        "updatedAt": "2026-01-01T00:00:00+01:00",
+        "lineCode": "42"
+      }
+    },
+    {
+      "name": "无法解析的发车时间被忽略",
+      "from": [
+        "Bus280PolicyTest.board ignores calls whose departure time cannot be parsed"
+      ],
+      "input": {
+        "config": {
+          "lineCode": "42",
+          "stopA": {
+            "id": "NSR:StopPlace:90001",
+            "name": "Alpha"
+          },
+          "stopB": {
+            "id": "NSR:StopPlace:90002",
+            "name": "Beta"
+          }
+        },
+        "callsA": [
+          {
+            "realtime": false,
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "realtime": false,
+            "aimedDepartureTime": "not-a-time",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T08:57:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "callsB": [],
+        "now": "2026-09-22T08:00:00+02:00"
+      },
+      "expected": {
+        "boards": [
+          {
+            "boardStop": "Alpha",
+            "towardStop": "Beta",
+            "departures": [
+              {
+                "depTime": "2026-09-22T08:57:00+02:00",
+                "destName": "Beta",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": false
+              }
+            ]
+          },
+          {
+            "boardStop": "Beta",
+            "towardStop": "Alpha",
+            "departures": []
+          }
+        ],
+        "updatedAt": "2026-01-01T00:00:00+01:00",
+        "lineCode": "42"
+      }
+    },
+    {
+      "name": "有实时时刻时优先于计划时刻",
+      "from": [
+        "Bus280PolicyTest.board prefers the expected departure time over the aimed one"
+      ],
+      "input": {
+        "config": {
+          "lineCode": "42",
+          "stopA": {
+            "id": "NSR:StopPlace:90001",
+            "name": "Alpha"
+          },
+          "stopB": {
+            "id": "NSR:StopPlace:90002",
+            "name": "Beta"
+          }
+        },
+        "callsA": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-09-22T08:57:00+02:00",
+            "expectedDepartureTime": "2026-09-22T09:02:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T09:27:00+02:00",
+            "expectedDepartureTime": " ",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "callsB": [],
+        "now": "2026-09-22T08:00:00+02:00"
+      },
+      "expected": {
+        "boards": [
+          {
+            "boardStop": "Alpha",
+            "towardStop": "Beta",
+            "departures": [
+              {
+                "depTime": "2026-09-22T09:02:00+02:00",
+                "destName": "Beta",
+                "delayMin": 5,
+                "cancelled": false,
+                "delayKnown": true
+              },
+              {
+                "depTime": "2026-09-22T09:27:00+02:00",
+                "destName": "Beta",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": false
+              }
+            ]
+          },
+          {
+            "boardStop": "Beta",
+            "towardStop": "Alpha",
+            "departures": []
+          }
+        ],
+        "updatedAt": "2026-01-01T00:00:00+01:00",
+        "lineCode": "42"
+      }
+    },
+    {
+      "name": "实时正晚点换算成分钟",
+      "from": [
+        "Bus280PolicyTest.realtime delay is reported in minutes"
+      ],
+      "input": {
+        "config": {
+          "lineCode": "42",
+          "stopA": {
+            "id": "NSR:StopPlace:90001",
+            "name": "Alpha"
+          },
+          "stopB": {
+            "id": "NSR:StopPlace:90002",
+            "name": "Beta"
+          }
+        },
+        "callsA": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-09-22T08:57:00+02:00",
+            "expectedDepartureTime": "2026-09-22T09:04:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "callsB": [],
+        "now": "2026-09-22T08:00:00+02:00"
+      },
+      "expected": {
+        "boards": [
+          {
+            "boardStop": "Alpha",
+            "towardStop": "Beta",
+            "departures": [
+              {
+                "depTime": "2026-09-22T09:04:00+02:00",
+                "destName": "Beta",
+                "delayMin": 7,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ]
+          },
+          {
+            "boardStop": "Beta",
+            "towardStop": "Alpha",
+            "departures": []
+          }
+        ],
+        "updatedAt": "2026-01-01T00:00:00+01:00",
+        "lineCode": "42"
+      }
+    },
+    {
+      "name": "没有实时数据标记为未知而不是准点",
+      "from": [
+        "Bus280PolicyTest.a departure without realtime data is reported as unknown, not on time"
+      ],
+      "input": {
+        "config": {
+          "lineCode": "42",
+          "stopA": {
+            "id": "NSR:StopPlace:90001",
+            "name": "Alpha"
+          },
+          "stopB": {
+            "id": "NSR:StopPlace:90002",
+            "name": "Beta"
+          }
+        },
+        "callsA": [
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T08:57:00+02:00",
+            "expectedDepartureTime": "2026-09-22T08:57:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "callsB": [],
+        "now": "2026-09-22T08:00:00+02:00"
+      },
+      "expected": {
+        "boards": [
+          {
+            "boardStop": "Alpha",
+            "towardStop": "Beta",
+            "departures": [
+              {
+                "depTime": "2026-09-22T08:57:00+02:00",
+                "destName": "Beta",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": false
+              }
+            ]
+          },
+          {
+            "boardStop": "Beta",
+            "towardStop": "Alpha",
+            "departures": []
+          }
+        ],
+        "updatedAt": "2026-01-01T00:00:00+01:00",
+        "lineCode": "42"
+      }
+    },
+    {
+      "name": "取消的班次视为已知，无论 realtime 标志",
+      "from": [
+        "Bus280PolicyTest.a cancelled departure is known regardless of the realtime flag"
+      ],
+      "input": {
+        "config": {
+          "lineCode": "42",
+          "stopA": {
+            "id": "NSR:StopPlace:90001",
+            "name": "Alpha"
+          },
+          "stopB": {
+            "id": "NSR:StopPlace:90002",
+            "name": "Beta"
+          }
+        },
+        "callsA": [
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T08:57:00+02:00",
+            "cancellation": true,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "callsB": [],
+        "now": "2026-09-22T08:00:00+02:00"
+      },
+      "expected": {
+        "boards": [
+          {
+            "boardStop": "Alpha",
+            "towardStop": "Beta",
+            "departures": [
+              {
+                "depTime": "2026-09-22T08:57:00+02:00",
+                "destName": "Beta",
+                "delayMin": 0,
+                "cancelled": true,
+                "delayKnown": true
+              }
+            ]
+          },
+          {
+            "boardStop": "Beta",
+            "towardStop": "Alpha",
+            "departures": []
+          }
+        ],
+        "updatedAt": "2026-01-01T00:00:00+01:00",
+        "lineCode": "42"
+      }
+    },
+    {
+      "name": "两个方向都没有班次时返回两个空 board",
+      "from": [
+        "Bus280PolicyTest.no calls at all yields two empty boards (the card shows a single no-service line)"
+      ],
+      "input": {
+        "config": {
+          "lineCode": "42",
+          "stopA": {
+            "id": "NSR:StopPlace:90001",
+            "name": "Alpha"
+          },
+          "stopB": {
+            "id": "NSR:StopPlace:90002",
+            "name": "Beta"
+          }
+        },
+        "callsA": [],
+        "callsB": [],
+        "now": "2026-09-22T08:00:00+02:00"
+      },
+      "expected": {
+        "boards": [
+          {
+            "boardStop": "Alpha",
+            "towardStop": "Beta",
+            "departures": []
+          },
+          {
+            "boardStop": "Beta",
+            "towardStop": "Alpha",
+            "departures": []
+          }
+        ],
+        "updatedAt": "2026-01-01T00:00:00+01:00",
+        "lineCode": "42"
+      }
+    },
+    {
+      "name": "站序里缺 A（本站自己都不在站序里）的班次被排除",
+      "from": [],
+      "input": {
+        "config": {
+          "lineCode": "42",
+          "stopA": {
+            "id": "NSR:StopPlace:90001",
+            "name": "Alpha"
+          },
+          "stopB": {
+            "id": "NSR:StopPlace:90002",
+            "name": "Beta"
+          }
+        },
+        "callsA": [
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T08:57:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90003"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "callsB": [],
+        "now": "2026-09-22T08:00:00+02:00"
+      },
+      "expected": {
+        "boards": [
+          {
+            "boardStop": "Alpha",
+            "towardStop": "Beta",
+            "departures": []
+          },
+          {
+            "boardStop": "Beta",
+            "towardStop": "Alpha",
+            "departures": []
+          }
+        ],
+        "updatedAt": "2026-01-01T00:00:00+01:00",
+        "lineCode": "42"
+      }
+    },
+    {
+      "name": "同一时刻发两班都保留",
+      "from": [],
+      "input": {
+        "config": {
+          "lineCode": "42",
+          "stopA": {
+            "id": "NSR:StopPlace:90001",
+            "name": "Alpha"
+          },
+          "stopB": {
+            "id": "NSR:StopPlace:90002",
+            "name": "Beta"
+          }
+        },
+        "callsA": [
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T08:15:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T08:15:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta via Mid"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "callsB": [],
+        "now": "2026-09-22T08:00:00+02:00"
+      },
+      "expected": {
+        "boards": [
+          {
+            "boardStop": "Alpha",
+            "towardStop": "Beta",
+            "departures": [
+              {
+                "depTime": "2026-09-22T08:15:00+02:00",
+                "destName": "Beta",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": false
+              },
+              {
+                "depTime": "2026-09-22T08:15:00+02:00",
+                "destName": "Beta via Mid",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": false
+              }
+            ]
+          },
+          {
+            "boardStop": "Beta",
+            "towardStop": "Alpha",
+            "departures": []
+          }
+        ],
+        "updatedAt": "2026-01-01T00:00:00+01:00",
+        "lineCode": "42"
+      }
+    },
+    {
+      "name": "跨午夜：前一天晚班与次日凌晨班按真实先后排序",
+      "from": [],
+      "input": {
+        "config": {
+          "lineCode": "42",
+          "stopA": {
+            "id": "NSR:StopPlace:90001",
+            "name": "Alpha"
+          },
+          "stopB": {
+            "id": "NSR:StopPlace:90002",
+            "name": "Beta"
+          }
+        },
+        "callsA": [
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-23T00:10:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-09-22T23:50:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "callsB": [],
+        "now": "2026-09-22T23:45:00+02:00"
+      },
+      "expected": {
+        "boards": [
+          {
+            "boardStop": "Alpha",
+            "towardStop": "Beta",
+            "departures": [
+              {
+                "depTime": "2026-09-22T23:50:00+02:00",
+                "destName": "Beta",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": false
+              },
+              {
+                "depTime": "2026-09-23T00:10:00+02:00",
+                "destName": "Beta",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": false
+              }
+            ]
+          },
+          {
+            "boardStop": "Beta",
+            "towardStop": "Alpha",
+            "departures": []
+          }
+        ],
+        "updatedAt": "2026-01-01T00:00:00+01:00",
+        "lineCode": "42"
+      }
+    },
+    {
+      "name": "夏令时切换日（欧洲 2026-03-29 凌晨拨快一小时）跨越切换点的班次仍按真实先后排序",
+      "from": [],
+      "input": {
+        "config": {
+          "lineCode": "42",
+          "stopA": {
+            "id": "NSR:StopPlace:90001",
+            "name": "Alpha"
+          },
+          "stopB": {
+            "id": "NSR:StopPlace:90002",
+            "name": "Beta"
+          }
+        },
+        "callsA": [
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-03-29T03:15:00+02:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-03-29T01:45:00+01:00",
+            "cancellation": false,
+            "destinationDisplay": {
+              "frontText": "Beta"
+            },
+            "serviceJourney": {
+              "transportMode": "bus",
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "42"
+                }
+              },
+              "quays": [
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90001"
+                  }
+                },
+                {
+                  "stopPlace": {
+                    "id": "NSR:StopPlace:90002"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "callsB": [],
+        "now": "2026-03-29T01:30:00+01:00"
+      },
+      "expected": {
+        "boards": [
+          {
+            "boardStop": "Alpha",
+            "towardStop": "Beta",
+            "departures": [
+              {
+                "depTime": "2026-03-29T01:45:00+01:00",
+                "destName": "Beta",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": false
+              },
+              {
+                "depTime": "2026-03-29T03:15:00+02:00",
+                "destName": "Beta",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": false
+              }
+            ]
+          },
+          {
+            "boardStop": "Beta",
+            "towardStop": "Alpha",
+            "departures": []
+          }
+        ],
+        "updatedAt": "2026-01-01T00:00:00+01:00",
+        "lineCode": "42"
+      }
+    }
+  ]
+}

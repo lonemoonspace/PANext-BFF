@@ -1,0 +1,4602 @@
+{
+  "subject": "TrainRepository.refresh",
+  "kotlin": "app/src/main/java/com/personalassistant/app/data/train/TrainRepository.kt",
+  "cases": [
+    {
+      "name": "OUTSIDE：直达 L1 + 最近一班回家，不调用 fastestTrip / fetchStop",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T12:00:00+02:00",
+        "settings": {
+          "originStation": "Spikkestad",
+          "destStation": "Sandvika"
+        },
+        "both": {
+          "a": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T12:10:00+02:00",
+              "expectedDepartureTime": "2026-09-23T12:10:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Lillestrøm"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T12:25:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T12:25:00+02:00"
+                  }
+                ]
+              }
+            }
+          ],
+          "b": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T12:20:00+02:00",
+              "expectedDepartureTime": "2026-09-23T12:20:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Spikkestad"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad"
+                    },
+                    "aimedArrivalTime": "2026-09-23T12:35:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T12:35:00+02:00"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "trips": [],
+        "stops": []
+      },
+      "expected": {
+        "status": {
+          "work": {
+            "planText": "L1 12:10 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T12:10:00+02:00",
+                "arrTime": "2026-09-23T12:25:00+02:00",
+                "fromName": "Spikkestad",
+                "toName": "Sandvika",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "正点！L1 12:10 发车，预计 12:25 到 Sandvika",
+            "alternatives": [
+              "L1 12:10 开往Lillestrøm"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "home": {
+            "planText": "L1 12:20 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T12:20:00+02:00",
+                "arrTime": "2026-09-23T12:35:00+02:00",
+                "fromName": "Sandvika",
+                "toName": "Spikkestad",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "正点！L1 12:20 发车，预计 12:35 到 Spikkestad",
+            "alternatives": [
+              "L1 12:20 开往Spikkestad"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "transfer": null,
+          "updatedAt": "2026-09-23T12:00:00+02:00",
+          "originStation": "Spikkestad",
+          "destinationStation": "Sandvika"
+        },
+        "error": false,
+        "calls": [
+          "fetchBoth:NSR:StopPlace:60736,NSR:StopPlace:610@2026-09-23T11:15:00+02:00"
+        ]
+      }
+    },
+    {
+      "name": "WORK：两段行程（L1 → Asker → R14），实时匹配到两段，含换乘面板",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T08:00:00+02:00",
+        "settings": {
+          "originStation": "Spikkestad",
+          "destStation": "Sandvika"
+        },
+        "both": {
+          "a": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T08:05:00+02:00",
+              "expectedDepartureTime": "2026-09-23T08:05:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Asker"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:05:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:05:00+02:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Asker stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:20:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:20:00+02:00"
+                  }
+                ]
+              }
+            },
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T08:35:00+02:00",
+              "expectedDepartureTime": "2026-09-23T08:35:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Asker"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Asker stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:45:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:45:00+02:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:55:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:55:00+02:00"
+                  }
+                ]
+              }
+            },
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T09:30:00+02:00",
+              "expectedDepartureTime": "2026-09-23T09:30:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Asker"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T09:30:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T09:30:00+02:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Asker stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T09:45:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T09:45:00+02:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T10:20:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T10:20:00+02:00"
+                  }
+                ]
+              }
+            }
+          ],
+          "b": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T08:25:00+02:00",
+              "expectedDepartureTime": "2026-09-23T08:25:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Oslo S"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "R14"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Asker stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:26:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:26:00+02:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Sandvika stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:40:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:40:00+02:00"
+                  }
+                ]
+              }
+            },
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T08:30:00+02:00",
+              "expectedDepartureTime": "2026-09-23T08:30:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Spikkestad"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:50:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:50:00+02:00"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "trips": [
+          {
+            "from": "NSR:StopPlace:60736",
+            "to": "NSR:StopPlace:610",
+            "result": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T08:05:00+02:00",
+                "arrTime": "2026-09-23T08:20:00+02:00",
+                "fromName": "Spikkestad stasjon",
+                "toName": "Asker stasjon"
+              },
+              {
+                "line": "R14",
+                "depTime": "2026-09-23T08:25:00+02:00",
+                "arrTime": "2026-09-23T08:40:00+02:00",
+                "fromName": "Asker stasjon",
+                "toName": "Sandvika stasjon"
+              }
+            ]
+          }
+        ],
+        "stops": [
+          {
+            "stopId": "NSR:StopPlace:59616",
+            "result": [
+              {
+                "realtime": true,
+                "aimedDepartureTime": "2026-09-23T09:50:00+02:00",
+                "expectedDepartureTime": "2026-09-23T09:50:00+02:00",
+                "cancellation": false,
+                "destinationDisplay": {
+                  "frontText": "Oslo S"
+                },
+                "serviceJourney": {
+                  "journeyPattern": {
+                    "line": {
+                      "publicCode": "R14"
+                    }
+                  },
+                  "estimatedCalls": [
+                    {
+                      "quay": {
+                        "name": "Asker stasjon"
+                      },
+                      "aimedArrivalTime": "2026-09-23T09:50:00+02:00",
+                      "expectedArrivalTime": "2026-09-23T09:50:00+02:00"
+                    },
+                    {
+                      "quay": {
+                        "name": "Sandvika stasjon"
+                      },
+                      "aimedArrivalTime": "2026-09-23T10:05:00+02:00",
+                      "expectedArrivalTime": "2026-09-23T10:05:00+02:00"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "status": {
+          "work": {
+            "planText": "L1 08:05 Spikkestad → 08:20 Asker，换乘R14 08:25 Asker → 08:40 Sandvika（全程 35 分钟）",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T08:05:00+02:00",
+                "arrTime": "2026-09-23T08:20:00+02:00",
+                "fromName": "Spikkestad",
+                "toName": "Asker",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              },
+              {
+                "line": "R14",
+                "depTime": "2026-09-23T08:25:00+02:00",
+                "arrTime": "2026-09-23T08:40:00+02:00",
+                "fromName": "Asker",
+                "toName": "Sandvika",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "最快方案（实时时刻），全程约 35 分钟，含 1 次换乘",
+            "alternatives": [
+              "L1 08:35 开往Asker",
+              "L1 09:30 开往Asker"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "home": {
+            "planText": "L1 08:30 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T08:30:00+02:00",
+                "arrTime": "2026-09-23T08:50:00+02:00",
+                "fromName": "Sandvika",
+                "toName": "Spikkestad",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "正点！L1 08:30 发车，预计 08:50 到 Spikkestad",
+            "alternatives": [
+              "L1 08:30 开往Spikkestad"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "transfer": {
+            "transferStation": "Asker",
+            "options": [
+              {
+                "l1": {
+                  "line": "L1",
+                  "fromName": "Spikkestad",
+                  "toName": "Asker",
+                  "depTime": "2026-09-23T09:30:00+02:00",
+                  "arrTime": "2026-09-23T09:45:00+02:00",
+                  "delayMin": 0,
+                  "cancelled": false,
+                  "delayKnown": true
+                },
+                "r14": {
+                  "line": "R14",
+                  "fromName": "Asker",
+                  "toName": "Sandvika",
+                  "depTime": "2026-09-23T09:50:00+02:00",
+                  "arrTime": "2026-09-23T10:05:00+02:00",
+                  "delayMin": 0,
+                  "cancelled": false,
+                  "delayKnown": true
+                },
+                "waitMin": 5,
+                "directArrTime": "2026-09-23T10:20:00+02:00",
+                "savedMin": 15
+              }
+            ],
+            "updatedAt": "2026-09-23T08:00:00+02:00"
+          },
+          "updatedAt": "2026-09-23T08:00:00+02:00",
+          "originStation": "Spikkestad",
+          "destinationStation": "Sandvika"
+        },
+        "error": false,
+        "calls": [
+          "fastestTrip:NSR:StopPlace:60736->NSR:StopPlace:610@2026-09-23T08:00:00+02:00",
+          "fetchBoth:NSR:StopPlace:60736,NSR:StopPlace:610@2026-09-23T07:15:00+02:00",
+          "fetchStop:NSR:StopPlace:59616@2026-09-23T07:15:00+02:00"
+        ]
+      }
+    },
+    {
+      "name": "WORK：行程只有一段 → 退回直达",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T08:00:00+02:00",
+        "settings": {
+          "originStation": "Spikkestad",
+          "destStation": "Sandvika"
+        },
+        "both": {
+          "a": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T08:10:00+02:00",
+              "expectedDepartureTime": "2026-09-23T08:10:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Lillestrøm"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:10:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:10:00+02:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:40:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:40:00+02:00"
+                  }
+                ]
+              }
+            }
+          ],
+          "b": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T08:20:00+02:00",
+              "expectedDepartureTime": "2026-09-23T08:20:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Spikkestad"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:50:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:50:00+02:00"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "trips": [
+          {
+            "from": "NSR:StopPlace:60736",
+            "to": "NSR:StopPlace:610",
+            "result": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T08:10:00+02:00",
+                "arrTime": "2026-09-23T08:40:00+02:00",
+                "fromName": "Spikkestad stasjon",
+                "toName": "Sandvika stasjon"
+              }
+            ]
+          }
+        ],
+        "stops": [
+          {
+            "stopId": "NSR:StopPlace:59616",
+            "result": []
+          }
+        ]
+      },
+      "expected": {
+        "status": {
+          "work": {
+            "planText": "L1 08:10 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T08:10:00+02:00",
+                "arrTime": "2026-09-23T08:40:00+02:00",
+                "fromName": "Spikkestad",
+                "toName": "Sandvika",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "正点！L1 08:10 发车，预计 08:40 到 Sandvika",
+            "alternatives": [
+              "L1 08:10 开往Lillestrøm"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "home": {
+            "planText": "L1 08:20 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T08:20:00+02:00",
+                "arrTime": "2026-09-23T08:50:00+02:00",
+                "fromName": "Sandvika",
+                "toName": "Spikkestad",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "正点！L1 08:20 发车，预计 08:50 到 Spikkestad",
+            "alternatives": [
+              "L1 08:20 开往Spikkestad"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "transfer": {
+            "transferStation": "Asker",
+            "options": [],
+            "updatedAt": "2026-09-23T08:00:00+02:00"
+          },
+          "updatedAt": "2026-09-23T08:00:00+02:00",
+          "originStation": "Spikkestad",
+          "destinationStation": "Sandvika"
+        },
+        "error": false,
+        "calls": [
+          "fastestTrip:NSR:StopPlace:60736->NSR:StopPlace:610@2026-09-23T08:00:00+02:00",
+          "fetchBoth:NSR:StopPlace:60736,NSR:StopPlace:610@2026-09-23T07:15:00+02:00",
+          "fetchStop:NSR:StopPlace:59616@2026-09-23T07:15:00+02:00"
+        ]
+      }
+    },
+    {
+      "name": "WORK：fastestTrip 抛异常 → 退回直达；换乘面板照常",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T08:00:00+02:00",
+        "settings": {
+          "originStation": "Spikkestad",
+          "destStation": "Sandvika"
+        },
+        "both": {
+          "a": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T08:10:00+02:00",
+              "expectedDepartureTime": "2026-09-23T08:10:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Lillestrøm"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:10:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:10:00+02:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:40:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:40:00+02:00"
+                  }
+                ]
+              }
+            },
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T09:30:00+02:00",
+              "expectedDepartureTime": "2026-09-23T09:30:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Lillestrøm"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T09:30:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T09:30:00+02:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Asker stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T09:45:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T09:45:00+02:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T10:20:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T10:20:00+02:00"
+                  }
+                ]
+              }
+            }
+          ],
+          "b": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T08:20:00+02:00",
+              "expectedDepartureTime": "2026-09-23T08:20:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Spikkestad"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:50:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:50:00+02:00"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "trips": [
+          {
+            "from": "NSR:StopPlace:60736",
+            "to": "NSR:StopPlace:610",
+            "result": {
+              "$error": "entur trip service down"
+            }
+          }
+        ],
+        "stops": [
+          {
+            "stopId": "NSR:StopPlace:59616",
+            "result": [
+              {
+                "realtime": true,
+                "aimedDepartureTime": "2026-09-23T09:50:00+02:00",
+                "expectedDepartureTime": "2026-09-23T09:50:00+02:00",
+                "cancellation": false,
+                "destinationDisplay": {
+                  "frontText": "Oslo S"
+                },
+                "serviceJourney": {
+                  "journeyPattern": {
+                    "line": {
+                      "publicCode": "R14"
+                    }
+                  },
+                  "estimatedCalls": [
+                    {
+                      "quay": {
+                        "name": "Asker stasjon"
+                      },
+                      "aimedArrivalTime": "2026-09-23T09:50:00+02:00",
+                      "expectedArrivalTime": "2026-09-23T09:50:00+02:00"
+                    },
+                    {
+                      "quay": {
+                        "name": "Sandvika stasjon"
+                      },
+                      "aimedArrivalTime": "2026-09-23T10:05:00+02:00",
+                      "expectedArrivalTime": "2026-09-23T10:05:00+02:00"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "status": {
+          "work": {
+            "planText": "L1 08:10 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T08:10:00+02:00",
+                "arrTime": "2026-09-23T08:40:00+02:00",
+                "fromName": "Spikkestad",
+                "toName": "Sandvika",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "正点！L1 08:10 发车，预计 08:40 到 Sandvika",
+            "alternatives": [
+              "L1 08:10 开往Lillestrøm",
+              "L1 09:30 开往Lillestrøm"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "home": {
+            "planText": "L1 08:20 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T08:20:00+02:00",
+                "arrTime": "2026-09-23T08:50:00+02:00",
+                "fromName": "Sandvika",
+                "toName": "Spikkestad",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "正点！L1 08:20 发车，预计 08:50 到 Spikkestad",
+            "alternatives": [
+              "L1 08:20 开往Spikkestad"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "transfer": {
+            "transferStation": "Asker",
+            "options": [
+              {
+                "l1": {
+                  "line": "L1",
+                  "fromName": "Spikkestad",
+                  "toName": "Asker",
+                  "depTime": "2026-09-23T09:30:00+02:00",
+                  "arrTime": "2026-09-23T09:45:00+02:00",
+                  "delayMin": 0,
+                  "cancelled": false,
+                  "delayKnown": true
+                },
+                "r14": {
+                  "line": "R14",
+                  "fromName": "Asker",
+                  "toName": "Sandvika",
+                  "depTime": "2026-09-23T09:50:00+02:00",
+                  "arrTime": "2026-09-23T10:05:00+02:00",
+                  "delayMin": 0,
+                  "cancelled": false,
+                  "delayKnown": true
+                },
+                "waitMin": 5,
+                "directArrTime": "2026-09-23T10:20:00+02:00",
+                "savedMin": 15
+              }
+            ],
+            "updatedAt": "2026-09-23T08:00:00+02:00"
+          },
+          "updatedAt": "2026-09-23T08:00:00+02:00",
+          "originStation": "Spikkestad",
+          "destinationStation": "Sandvika"
+        },
+        "error": false,
+        "calls": [
+          "fastestTrip:NSR:StopPlace:60736->NSR:StopPlace:610@2026-09-23T08:00:00+02:00",
+          "fetchBoth:NSR:StopPlace:60736,NSR:StopPlace:610@2026-09-23T07:15:00+02:00",
+          "fetchStop:NSR:StopPlace:59616@2026-09-23T07:15:00+02:00"
+        ]
+      }
+    },
+    {
+      "name": "WORK：fetchStop（Asker）抛异常 → transfer 为 null，其余正常",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T08:00:00+02:00",
+        "settings": {
+          "originStation": "Spikkestad",
+          "destStation": "Sandvika"
+        },
+        "both": {
+          "a": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T08:05:00+02:00",
+              "expectedDepartureTime": "2026-09-23T08:05:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Asker"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:05:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:05:00+02:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Asker stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:20:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:20:00+02:00"
+                  }
+                ]
+              }
+            },
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T08:35:00+02:00",
+              "expectedDepartureTime": "2026-09-23T08:35:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Asker"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Asker stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:45:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:45:00+02:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:55:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:55:00+02:00"
+                  }
+                ]
+              }
+            },
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T09:30:00+02:00",
+              "expectedDepartureTime": "2026-09-23T09:30:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Asker"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T09:30:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T09:30:00+02:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Asker stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T09:45:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T09:45:00+02:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T10:20:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T10:20:00+02:00"
+                  }
+                ]
+              }
+            }
+          ],
+          "b": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T08:25:00+02:00",
+              "expectedDepartureTime": "2026-09-23T08:25:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Oslo S"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "R14"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Asker stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:26:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:26:00+02:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Sandvika stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:40:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:40:00+02:00"
+                  }
+                ]
+              }
+            },
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T08:30:00+02:00",
+              "expectedDepartureTime": "2026-09-23T08:30:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Spikkestad"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:50:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:50:00+02:00"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "trips": [
+          {
+            "from": "NSR:StopPlace:60736",
+            "to": "NSR:StopPlace:610",
+            "result": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T08:05:00+02:00",
+                "arrTime": "2026-09-23T08:20:00+02:00",
+                "fromName": "Spikkestad stasjon",
+                "toName": "Asker stasjon"
+              },
+              {
+                "line": "R14",
+                "depTime": "2026-09-23T08:25:00+02:00",
+                "arrTime": "2026-09-23T08:40:00+02:00",
+                "fromName": "Asker stasjon",
+                "toName": "Sandvika stasjon"
+              }
+            ]
+          }
+        ],
+        "stops": [
+          {
+            "stopId": "NSR:StopPlace:59616",
+            "result": {
+              "$error": "asker stop down"
+            }
+          }
+        ]
+      },
+      "expected": {
+        "status": {
+          "work": {
+            "planText": "L1 08:05 Spikkestad → 08:20 Asker，换乘R14 08:25 Asker → 08:40 Sandvika（全程 35 分钟）",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T08:05:00+02:00",
+                "arrTime": "2026-09-23T08:20:00+02:00",
+                "fromName": "Spikkestad",
+                "toName": "Asker",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              },
+              {
+                "line": "R14",
+                "depTime": "2026-09-23T08:25:00+02:00",
+                "arrTime": "2026-09-23T08:40:00+02:00",
+                "fromName": "Asker",
+                "toName": "Sandvika",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "最快方案（实时时刻），全程约 35 分钟，含 1 次换乘",
+            "alternatives": [
+              "L1 08:35 开往Asker",
+              "L1 09:30 开往Asker"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "home": {
+            "planText": "L1 08:30 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T08:30:00+02:00",
+                "arrTime": "2026-09-23T08:50:00+02:00",
+                "fromName": "Sandvika",
+                "toName": "Spikkestad",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "正点！L1 08:30 发车，预计 08:50 到 Spikkestad",
+            "alternatives": [
+              "L1 08:30 开往Spikkestad"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "transfer": null,
+          "updatedAt": "2026-09-23T08:00:00+02:00",
+          "originStation": "Spikkestad",
+          "destinationStation": "Sandvika"
+        },
+        "error": false,
+        "calls": [
+          "fastestTrip:NSR:StopPlace:60736->NSR:StopPlace:610@2026-09-23T08:00:00+02:00",
+          "fetchBoth:NSR:StopPlace:60736,NSR:StopPlace:610@2026-09-23T07:15:00+02:00",
+          "fetchStop:NSR:StopPlace:59616@2026-09-23T07:15:00+02:00"
+        ]
+      }
+    },
+    {
+      "name": "WORK：Sandvika → Spikkestad（换乘站不在中间）→ 不调用 fetchStop，transfer 为 null",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T08:00:00+02:00",
+        "settings": {
+          "originStation": "Sandvika",
+          "destStation": "Spikkestad"
+        },
+        "both": {
+          "a": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T08:10:00+02:00",
+              "expectedDepartureTime": "2026-09-23T08:10:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Spikkestad"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:10:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:10:00+02:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Spikkestad"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:40:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:40:00+02:00"
+                  }
+                ]
+              }
+            }
+          ],
+          "b": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T08:20:00+02:00",
+              "expectedDepartureTime": "2026-09-23T08:20:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Asker"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:50:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:50:00+02:00"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "trips": [
+          {
+            "from": "NSR:StopPlace:610",
+            "to": "NSR:StopPlace:60736",
+            "result": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T08:10:00+02:00",
+                "arrTime": "2026-09-23T08:40:00+02:00",
+                "fromName": "Sandvika stasjon",
+                "toName": "Spikkestad stasjon"
+              }
+            ]
+          }
+        ],
+        "stops": []
+      },
+      "expected": {
+        "status": {
+          "work": {
+            "planText": "L1 08:10 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T08:10:00+02:00",
+                "arrTime": "2026-09-23T08:40:00+02:00",
+                "fromName": "Sandvika",
+                "toName": "Spikkestad",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "正点！L1 08:10 发车，预计 08:40 到 Spikkestad",
+            "alternatives": [
+              "L1 08:10 开往Spikkestad"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "home": {
+            "planText": "L1 08:20 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T08:20:00+02:00",
+                "arrTime": "2026-09-23T08:50:00+02:00",
+                "fromName": "Spikkestad",
+                "toName": "Sandvika",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "正点！L1 08:20 发车，预计 08:50 到 Sandvika",
+            "alternatives": [
+              "L1 08:20 开往Asker"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "transfer": null,
+          "updatedAt": "2026-09-23T08:00:00+02:00",
+          "originStation": "Sandvika",
+          "destinationStation": "Spikkestad"
+        },
+        "error": false,
+        "calls": [
+          "fastestTrip:NSR:StopPlace:610->NSR:StopPlace:60736@2026-09-23T08:00:00+02:00",
+          "fetchBoth:NSR:StopPlace:610,NSR:StopPlace:60736@2026-09-23T07:15:00+02:00"
+        ]
+      }
+    },
+    {
+      "name": "RETURN：两段回家行程（R14 → Asker → L1），对向车取 L1 段",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T15:00:00+02:00",
+        "settings": {
+          "originStation": "Spikkestad",
+          "destStation": "Sandvika"
+        },
+        "both": {
+          "a": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T15:10:00+02:00",
+              "expectedDepartureTime": "2026-09-23T15:10:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Lillestrøm"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad"
+                    },
+                    "aimedArrivalTime": "2026-09-23T15:10:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T15:10:00+02:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T15:40:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T15:40:00+02:00"
+                  }
+                ]
+              }
+            },
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T15:25:00+02:00",
+              "expectedDepartureTime": "2026-09-23T15:25:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Spikkestad"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Asker stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T15:25:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T15:25:00+02:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Spikkestad stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T15:55:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T15:55:00+02:00"
+                  }
+                ]
+              }
+            }
+          ],
+          "b": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T15:05:00+02:00",
+              "expectedDepartureTime": "2026-09-23T15:05:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Asker"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "R14"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Sandvika stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T15:05:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T15:05:00+02:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Asker stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T15:20:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T15:20:00+02:00"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "trips": [
+          {
+            "from": "NSR:StopPlace:60736",
+            "to": "NSR:StopPlace:610",
+            "result": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T15:10:00+02:00",
+                "arrTime": "2026-09-23T15:40:00+02:00",
+                "fromName": "Spikkestad stasjon",
+                "toName": "Sandvika stasjon"
+              }
+            ]
+          },
+          {
+            "from": "NSR:StopPlace:610",
+            "to": "NSR:StopPlace:60736",
+            "result": [
+              {
+                "line": "R14",
+                "depTime": "2026-09-23T15:05:00+02:00",
+                "arrTime": "2026-09-23T15:20:00+02:00",
+                "fromName": "Sandvika stasjon",
+                "toName": "Asker stasjon"
+              },
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T15:25:00+02:00",
+                "arrTime": "2026-09-23T15:55:00+02:00",
+                "fromName": "Asker stasjon",
+                "toName": "Spikkestad stasjon"
+              }
+            ]
+          }
+        ],
+        "stops": []
+      },
+      "expected": {
+        "status": {
+          "work": {
+            "planText": "L1 15:10 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T15:10:00+02:00",
+                "arrTime": "2026-09-23T15:40:00+02:00",
+                "fromName": "Spikkestad",
+                "toName": "Sandvika",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "正点！L1 15:10 发车，预计 15:40 到 Sandvika",
+            "alternatives": [
+              "L1 15:10 开往Lillestrøm"
+            ],
+            "oppositeText": "对向 L1（Spikkestad 方向）15:25 正点",
+            "oppositeState": "ON_TIME"
+          },
+          "home": {
+            "planText": "R14 15:05 Sandvika → 15:20 Asker，换乘L1 15:25 Asker → 15:55 Spikkestad（全程 50 分钟）",
+            "legs": [
+              {
+                "line": "R14",
+                "depTime": "2026-09-23T15:05:00+02:00",
+                "arrTime": "2026-09-23T15:20:00+02:00",
+                "fromName": "Sandvika",
+                "toName": "Asker",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              },
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T15:25:00+02:00",
+                "arrTime": "2026-09-23T15:55:00+02:00",
+                "fromName": "Asker",
+                "toName": "Spikkestad",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "最快方案（实时时刻），全程约 50 分钟，含 1 次换乘",
+            "alternatives": [],
+            "oppositeText": "对向 L1（Lillestrøm 方向）15:10 正点",
+            "oppositeState": "ON_TIME"
+          },
+          "transfer": null,
+          "updatedAt": "2026-09-23T15:00:00+02:00",
+          "originStation": "Spikkestad",
+          "destinationStation": "Sandvika"
+        },
+        "error": false,
+        "calls": [
+          "fastestTrip:NSR:StopPlace:60736->NSR:StopPlace:610@2026-09-23T15:00:00+02:00",
+          "fastestTrip:NSR:StopPlace:610->NSR:StopPlace:60736@2026-09-23T15:00:00+02:00",
+          "fetchBoth:NSR:StopPlace:60736,NSR:StopPlace:610@2026-09-23T14:15:00+02:00"
+        ]
+      }
+    },
+    {
+      "name": "RETURN：fastestTrip 返回 null → 退回最近一班",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T15:00:00+02:00",
+        "settings": {
+          "originStation": "Spikkestad",
+          "destStation": "Sandvika"
+        },
+        "both": {
+          "a": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T15:10:00+02:00",
+              "expectedDepartureTime": "2026-09-23T15:10:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Lillestrøm"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad"
+                    },
+                    "aimedArrivalTime": "2026-09-23T15:10:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T15:10:00+02:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T15:40:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T15:40:00+02:00"
+                  }
+                ]
+              }
+            }
+          ],
+          "b": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T15:20:00+02:00",
+              "expectedDepartureTime": "2026-09-23T15:20:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Spikkestad"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad"
+                    },
+                    "aimedArrivalTime": "2026-09-23T15:50:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T15:50:00+02:00"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "trips": [
+          {
+            "from": "NSR:StopPlace:60736",
+            "to": "NSR:StopPlace:610",
+            "result": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T15:10:00+02:00",
+                "arrTime": "2026-09-23T15:40:00+02:00",
+                "fromName": "Spikkestad stasjon",
+                "toName": "Sandvika stasjon"
+              }
+            ]
+          },
+          {
+            "from": "NSR:StopPlace:610",
+            "to": "NSR:StopPlace:60736",
+            "result": null
+          }
+        ],
+        "stops": []
+      },
+      "expected": {
+        "status": {
+          "work": {
+            "planText": "L1 15:10 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T15:10:00+02:00",
+                "arrTime": "2026-09-23T15:40:00+02:00",
+                "fromName": "Spikkestad",
+                "toName": "Sandvika",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "正点！L1 15:10 发车，预计 15:40 到 Sandvika",
+            "alternatives": [
+              "L1 15:10 开往Lillestrøm"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "home": {
+            "planText": "L1 15:20 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T15:20:00+02:00",
+                "arrTime": "2026-09-23T15:50:00+02:00",
+                "fromName": "Sandvika",
+                "toName": "Spikkestad",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "正点！L1 15:20 发车，预计 15:50 到 Spikkestad",
+            "alternatives": [
+              "L1 15:20 开往Spikkestad"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "transfer": null,
+          "updatedAt": "2026-09-23T15:00:00+02:00",
+          "originStation": "Spikkestad",
+          "destinationStation": "Sandvika"
+        },
+        "error": false,
+        "calls": [
+          "fastestTrip:NSR:StopPlace:60736->NSR:StopPlace:610@2026-09-23T15:00:00+02:00",
+          "fastestTrip:NSR:StopPlace:610->NSR:StopPlace:60736@2026-09-23T15:00:00+02:00",
+          "fetchBoth:NSR:StopPlace:60736,NSR:StopPlace:610@2026-09-23T14:15:00+02:00"
+        ]
+      }
+    },
+    {
+      "name": "站名不在 L1 列表（含空串）→ 未配置：不发任何请求，抛「请先在设置里选择车站」",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T12:00:00+02:00",
+        "settings": {
+          "originStation": "不存在的站",
+          "destStation": "也不存在"
+        },
+        "both": {
+          "$error": "不应被调用"
+        },
+        "trips": [],
+        "stops": []
+      },
+      "expected": {
+        "status": null,
+        "error": true,
+        "calls": []
+      }
+    },
+    {
+      "name": "主方案已取消 → BAD，备选排除已取消班次、最多 3 条",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T12:00:00+02:00",
+        "settings": {
+          "originStation": "Spikkestad",
+          "destStation": "Sandvika"
+        },
+        "both": {
+          "a": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T12:05:00+02:00",
+              "expectedDepartureTime": "2026-09-23T12:05:00+02:00",
+              "cancellation": true,
+              "destinationDisplay": {
+                "frontText": "Lillestrøm"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T12:20:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T12:20:00+02:00"
+                  }
+                ]
+              }
+            },
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T12:07:00+02:00",
+              "expectedDepartureTime": "2026-09-23T12:07:00+02:00",
+              "cancellation": true,
+              "destinationDisplay": {
+                "frontText": "Lillestrøm"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T12:22:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T12:22:00+02:00"
+                  }
+                ]
+              }
+            },
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T12:15:00+02:00",
+              "expectedDepartureTime": "2026-09-23T12:15:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Lillestrøm"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T12:30:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T12:30:00+02:00"
+                  }
+                ]
+              }
+            },
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T12:20:00+02:00",
+              "expectedDepartureTime": "2026-09-23T12:20:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Lillestrøm"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T12:35:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T12:35:00+02:00"
+                  }
+                ]
+              }
+            },
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T12:25:00+02:00",
+              "expectedDepartureTime": "2026-09-23T12:25:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Lillestrøm"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T12:40:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T12:40:00+02:00"
+                  }
+                ]
+              }
+            },
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T12:30:00+02:00",
+              "expectedDepartureTime": "2026-09-23T12:30:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Lillestrøm"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T12:45:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T12:45:00+02:00"
+                  }
+                ]
+              }
+            }
+          ],
+          "b": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T12:20:00+02:00",
+              "expectedDepartureTime": "2026-09-23T12:20:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Spikkestad"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad"
+                    },
+                    "aimedArrivalTime": "2026-09-23T12:35:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T12:35:00+02:00"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "trips": [],
+        "stops": []
+      },
+      "expected": {
+        "status": {
+          "work": {
+            "planText": "L1 12:05 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T12:05:00+02:00",
+                "arrTime": "2026-09-23T12:20:00+02:00",
+                "fromName": "Spikkestad",
+                "toName": "Sandvika",
+                "delayMin": 0,
+                "cancelled": true,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "BAD",
+            "adviceText": "L1 12:05 已取消！建议改乘：L1 12:15 开往Lillestrøm；L1 12:20 开往Lillestrøm；L1 12:25 开往Lillestrøm",
+            "alternatives": [
+              "L1 12:15 开往Lillestrøm",
+              "L1 12:20 开往Lillestrøm",
+              "L1 12:25 开往Lillestrøm"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "home": {
+            "planText": "L1 12:20 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T12:20:00+02:00",
+                "arrTime": "2026-09-23T12:35:00+02:00",
+                "fromName": "Sandvika",
+                "toName": "Spikkestad",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "正点！L1 12:20 发车，预计 12:35 到 Spikkestad",
+            "alternatives": [
+              "L1 12:20 开往Spikkestad"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "transfer": null,
+          "updatedAt": "2026-09-23T12:00:00+02:00",
+          "originStation": "Spikkestad",
+          "destinationStation": "Sandvika"
+        },
+        "error": false,
+        "calls": [
+          "fetchBoth:NSR:StopPlace:60736,NSR:StopPlace:610@2026-09-23T11:15:00+02:00"
+        ]
+      }
+    },
+    {
+      "name": "无实时数据 → UNKNOWN",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T12:00:00+02:00",
+        "settings": {
+          "originStation": "Spikkestad",
+          "destStation": "Sandvika"
+        },
+        "both": {
+          "a": [
+            {
+              "realtime": false,
+              "aimedDepartureTime": "2026-09-23T12:10:00+02:00",
+              "expectedDepartureTime": "2026-09-23T12:10:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Lillestrøm"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T12:25:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T12:25:00+02:00"
+                  }
+                ]
+              }
+            }
+          ],
+          "b": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T12:20:00+02:00",
+              "expectedDepartureTime": "2026-09-23T12:20:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Spikkestad"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad"
+                    },
+                    "aimedArrivalTime": "2026-09-23T12:35:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T12:35:00+02:00"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "trips": [],
+        "stops": []
+      },
+      "expected": {
+        "status": {
+          "work": {
+            "planText": "L1 12:10 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T12:10:00+02:00",
+                "arrTime": "2026-09-23T12:25:00+02:00",
+                "fromName": "Spikkestad",
+                "toName": "Sandvika",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": false
+              }
+            ],
+            "adviceLevel": "UNKNOWN",
+            "adviceText": "实时信息未知，暂无法确认是否正点；请以车站广播和 Entur 最新信息为准",
+            "alternatives": [
+              "L1 12:10 开往Lillestrøm"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "home": {
+            "planText": "L1 12:20 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T12:20:00+02:00",
+                "arrTime": "2026-09-23T12:35:00+02:00",
+                "fromName": "Sandvika",
+                "toName": "Spikkestad",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "正点！L1 12:20 发车，预计 12:35 到 Spikkestad",
+            "alternatives": [
+              "L1 12:20 开往Spikkestad"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "transfer": null,
+          "updatedAt": "2026-09-23T12:00:00+02:00",
+          "originStation": "Spikkestad",
+          "destinationStation": "Sandvika"
+        },
+        "error": false,
+        "calls": [
+          "fetchBoth:NSR:StopPlace:60736,NSR:StopPlace:610@2026-09-23T11:15:00+02:00"
+        ]
+      }
+    },
+    {
+      "name": "行程段匹配不到实时班次 → delayKnown=false、时刻取行程计划值；有 ±3 分钟内两个候选时取最近者",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T08:00:00+02:00",
+        "settings": {
+          "originStation": "Spikkestad",
+          "destStation": "Sandvika"
+        },
+        "both": {
+          "a": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T08:03:00+02:00",
+              "expectedDepartureTime": "2026-09-23T08:03:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Asker"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:03:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:03:00+02:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Asker stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:18:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:18:00+02:00"
+                  }
+                ]
+              }
+            },
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T08:06:00+02:00",
+              "expectedDepartureTime": "2026-09-23T08:06:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Asker"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:06:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:06:00+02:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Asker stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:21:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:21:00+02:00"
+                  }
+                ]
+              }
+            }
+          ],
+          "b": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T08:30:00+02:00",
+              "expectedDepartureTime": "2026-09-23T08:30:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Spikkestad"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:50:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:50:00+02:00"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "trips": [
+          {
+            "from": "NSR:StopPlace:60736",
+            "to": "NSR:StopPlace:610",
+            "result": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T08:05:00+02:00",
+                "arrTime": "2026-09-23T08:20:00+02:00",
+                "fromName": "Spikkestad stasjon",
+                "toName": "Asker stasjon"
+              },
+              {
+                "line": "R14",
+                "depTime": "2026-09-23T08:25:00+02:00",
+                "arrTime": "2026-09-23T08:40:00+02:00",
+                "fromName": "Asker stasjon",
+                "toName": "Sandvika stasjon"
+              }
+            ]
+          }
+        ],
+        "stops": [
+          {
+            "stopId": "NSR:StopPlace:59616",
+            "result": []
+          }
+        ]
+      },
+      "expected": {
+        "status": {
+          "work": {
+            "planText": "L1 08:06 Spikkestad → 08:21 Asker，换乘R14 08:25 Asker → 08:40 Sandvika（全程 34 分钟）",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T08:06:00+02:00",
+                "arrTime": "2026-09-23T08:21:00+02:00",
+                "fromName": "Spikkestad",
+                "toName": "Asker",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              },
+              {
+                "line": "R14",
+                "depTime": "2026-09-23T08:25:00+02:00",
+                "arrTime": "2026-09-23T08:40:00+02:00",
+                "fromName": "Asker",
+                "toName": "Sandvika",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": false
+              }
+            ],
+            "adviceLevel": "UNKNOWN",
+            "adviceText": "实时信息未知，暂无法确认是否正点；请以车站广播和 Entur 最新信息为准",
+            "alternatives": [],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "home": {
+            "planText": "L1 08:30 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T08:30:00+02:00",
+                "arrTime": "2026-09-23T08:50:00+02:00",
+                "fromName": "Sandvika",
+                "toName": "Spikkestad",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "正点！L1 08:30 发车，预计 08:50 到 Spikkestad",
+            "alternatives": [
+              "L1 08:30 开往Spikkestad"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "transfer": {
+            "transferStation": "Asker",
+            "options": [],
+            "updatedAt": "2026-09-23T08:00:00+02:00"
+          },
+          "updatedAt": "2026-09-23T08:00:00+02:00",
+          "originStation": "Spikkestad",
+          "destinationStation": "Sandvika"
+        },
+        "error": false,
+        "calls": [
+          "fastestTrip:NSR:StopPlace:60736->NSR:StopPlace:610@2026-09-23T08:00:00+02:00",
+          "fetchBoth:NSR:StopPlace:60736,NSR:StopPlace:610@2026-09-23T07:15:00+02:00",
+          "fetchStop:NSR:StopPlace:59616@2026-09-23T07:15:00+02:00"
+        ]
+      }
+    },
+    {
+      "name": "fetchBoth 抛异常 → error: true",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T08:00:00+02:00",
+        "settings": {
+          "originStation": "Spikkestad",
+          "destStation": "Sandvika"
+        },
+        "both": {
+          "$error": "entur departures service down"
+        },
+        "trips": [],
+        "stops": []
+      },
+      "expected": {
+        "status": null,
+        "error": true,
+        "calls": [
+          "fetchBoth:NSR:StopPlace:60736,NSR:StopPlace:610@2026-09-23T07:15:00+02:00"
+        ]
+      }
+    },
+    {
+      "name": "夏令时结束当天（2026-10-25）窗口内一条",
+      "from": [],
+      "input": {
+        "now": "2026-10-25T08:00:00+01:00",
+        "settings": {
+          "originStation": "Spikkestad",
+          "destStation": "Sandvika"
+        },
+        "both": {
+          "a": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-10-25T08:10:00+01:00",
+              "expectedDepartureTime": "2026-10-25T08:10:00+01:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Lillestrøm"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad"
+                    },
+                    "aimedArrivalTime": "2026-10-25T08:10:00+01:00",
+                    "expectedArrivalTime": "2026-10-25T08:10:00+01:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-10-25T08:40:00+01:00",
+                    "expectedArrivalTime": "2026-10-25T08:40:00+01:00"
+                  }
+                ]
+              }
+            }
+          ],
+          "b": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-10-25T08:20:00+01:00",
+              "expectedDepartureTime": "2026-10-25T08:20:00+01:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Spikkestad"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad"
+                    },
+                    "aimedArrivalTime": "2026-10-25T08:50:00+01:00",
+                    "expectedArrivalTime": "2026-10-25T08:50:00+01:00"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "trips": [
+          {
+            "from": "NSR:StopPlace:60736",
+            "to": "NSR:StopPlace:610",
+            "result": [
+              {
+                "line": "L1",
+                "depTime": "2026-10-25T08:10:00+01:00",
+                "arrTime": "2026-10-25T08:40:00+01:00",
+                "fromName": "Spikkestad stasjon",
+                "toName": "Sandvika stasjon"
+              }
+            ]
+          }
+        ],
+        "stops": [
+          {
+            "stopId": "NSR:StopPlace:59616",
+            "result": []
+          }
+        ]
+      },
+      "expected": {
+        "status": {
+          "work": {
+            "planText": "L1 08:10 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-10-25T08:10:00+01:00",
+                "arrTime": "2026-10-25T08:40:00+01:00",
+                "fromName": "Spikkestad",
+                "toName": "Sandvika",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "正点！L1 08:10 发车，预计 08:40 到 Sandvika",
+            "alternatives": [
+              "L1 08:10 开往Lillestrøm"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "home": {
+            "planText": "L1 08:20 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-10-25T08:20:00+01:00",
+                "arrTime": "2026-10-25T08:50:00+01:00",
+                "fromName": "Sandvika",
+                "toName": "Spikkestad",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "正点！L1 08:20 发车，预计 08:50 到 Spikkestad",
+            "alternatives": [
+              "L1 08:20 开往Spikkestad"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "transfer": {
+            "transferStation": "Asker",
+            "options": [],
+            "updatedAt": "2026-10-25T08:00:00+01:00"
+          },
+          "updatedAt": "2026-10-25T08:00:00+01:00",
+          "originStation": "Spikkestad",
+          "destinationStation": "Sandvika"
+        },
+        "error": false,
+        "calls": [
+          "fastestTrip:NSR:StopPlace:60736->NSR:StopPlace:610@2026-10-25T08:00:00+01:00",
+          "fetchBoth:NSR:StopPlace:60736,NSR:StopPlace:610@2026-10-25T07:15:00+01:00",
+          "fetchStop:NSR:StopPlace:59616@2026-10-25T07:15:00+01:00"
+        ]
+      }
+    },
+    {
+      "name": "A：有延误 → WARN 分支，延误后缀只在 delayMin>0 时出现",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T12:00:00+02:00",
+        "settings": {
+          "originStation": "Spikkestad",
+          "destStation": "Sandvika"
+        },
+        "both": {
+          "a": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T12:10:00+02:00",
+              "expectedDepartureTime": "2026-09-23T12:15:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Lillestrøm"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T12:25:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T12:30:00+02:00"
+                  }
+                ]
+              }
+            },
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T12:20:00+02:00",
+              "expectedDepartureTime": "2026-09-23T12:24:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Lillestrøm"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T12:35:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T12:39:00+02:00"
+                  }
+                ]
+              }
+            },
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T12:30:00+02:00",
+              "expectedDepartureTime": "2026-09-23T12:29:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Lillestrøm"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T12:45:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T12:44:00+02:00"
+                  }
+                ]
+              }
+            }
+          ],
+          "b": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T12:20:00+02:00",
+              "expectedDepartureTime": "2026-09-23T12:20:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Spikkestad"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad"
+                    },
+                    "aimedArrivalTime": "2026-09-23T12:35:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T12:35:00+02:00"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "trips": [],
+        "stops": []
+      },
+      "expected": {
+        "status": {
+          "work": {
+            "planText": "L1 12:15 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T12:15:00+02:00",
+                "arrTime": "2026-09-23T12:30:00+02:00",
+                "fromName": "Spikkestad",
+                "toName": "Sandvika",
+                "delayMin": 5,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "WARN",
+            "adviceText": "L1 延误 5 分钟，预计 12:30 到 Sandvika",
+            "alternatives": [
+              "L1 12:15 开往Lillestrøm（延误 5 分钟）",
+              "L1 12:24 开往Lillestrøm（延误 4 分钟）",
+              "L1 12:29 开往Lillestrøm"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "home": {
+            "planText": "L1 12:20 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T12:20:00+02:00",
+                "arrTime": "2026-09-23T12:35:00+02:00",
+                "fromName": "Sandvika",
+                "toName": "Spikkestad",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "正点！L1 12:20 发车，预计 12:35 到 Spikkestad",
+            "alternatives": [
+              "L1 12:20 开往Spikkestad"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "transfer": null,
+          "updatedAt": "2026-09-23T12:00:00+02:00",
+          "originStation": "Spikkestad",
+          "destinationStation": "Sandvika"
+        },
+        "error": false,
+        "calls": [
+          "fetchBoth:NSR:StopPlace:60736,NSR:StopPlace:610@2026-09-23T11:15:00+02:00"
+        ]
+      }
+    },
+    {
+      "name": "B：OUTSIDE 备选边界与顺序（含 now、严格 isAfter、take(3) 按列表顺序）",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T12:00:00+02:00",
+        "settings": {
+          "originStation": "Spikkestad",
+          "destStation": "Sandvika"
+        },
+        "both": {
+          "a": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T12:20:00+02:00",
+              "expectedDepartureTime": "2026-09-23T12:20:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Lillestrøm"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T12:35:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T12:35:00+02:00"
+                  }
+                ]
+              }
+            },
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T12:00:00+02:00",
+              "expectedDepartureTime": "2026-09-23T12:00:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Lillestrøm"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T12:15:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T12:15:00+02:00"
+                  }
+                ]
+              }
+            },
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T12:02:01+02:00",
+              "expectedDepartureTime": "2026-09-23T12:02:01+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Lillestrøm"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T12:17:01+02:00",
+                    "expectedArrivalTime": "2026-09-23T12:17:01+02:00"
+                  }
+                ]
+              }
+            },
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T12:02:00+02:00",
+              "expectedDepartureTime": "2026-09-23T12:02:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Lillestrøm"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T12:17:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T12:17:00+02:00"
+                  }
+                ]
+              }
+            },
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T12:10:00+02:00",
+              "expectedDepartureTime": "2026-09-23T12:10:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Lillestrøm"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T12:25:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T12:25:00+02:00"
+                  }
+                ]
+              }
+            },
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T12:25:00+02:00",
+              "expectedDepartureTime": "2026-09-23T12:25:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Lillestrøm"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T12:40:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T12:40:00+02:00"
+                  }
+                ]
+              }
+            }
+          ],
+          "b": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T12:20:00+02:00",
+              "expectedDepartureTime": "2026-09-23T12:20:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Spikkestad"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad"
+                    },
+                    "aimedArrivalTime": "2026-09-23T12:35:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T12:35:00+02:00"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "trips": [],
+        "stops": []
+      },
+      "expected": {
+        "status": {
+          "work": {
+            "planText": "L1 12:00 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T12:00:00+02:00",
+                "arrTime": "2026-09-23T12:15:00+02:00",
+                "fromName": "Spikkestad",
+                "toName": "Sandvika",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "正点！L1 12:00 发车，预计 12:15 到 Sandvika",
+            "alternatives": [
+              "L1 12:20 开往Lillestrøm",
+              "L1 12:02 开往Lillestrøm",
+              "L1 12:10 开往Lillestrøm"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "home": {
+            "planText": "L1 12:20 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T12:20:00+02:00",
+                "arrTime": "2026-09-23T12:35:00+02:00",
+                "fromName": "Sandvika",
+                "toName": "Spikkestad",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "正点！L1 12:20 发车，预计 12:35 到 Spikkestad",
+            "alternatives": [
+              "L1 12:20 开往Spikkestad"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "transfer": null,
+          "updatedAt": "2026-09-23T12:00:00+02:00",
+          "originStation": "Spikkestad",
+          "destinationStation": "Sandvika"
+        },
+        "error": false,
+        "calls": [
+          "fetchBoth:NSR:StopPlace:60736,NSR:StopPlace:610@2026-09-23T11:15:00+02:00"
+        ]
+      }
+    },
+    {
+      "name": "C1：findCall ±3 分钟含秒仍匹配（leg.depTime+3:59）",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T08:00:00+02:00",
+        "settings": {
+          "originStation": "Spikkestad",
+          "destStation": "Sandvika"
+        },
+        "both": {
+          "a": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T08:08:59+02:00",
+              "expectedDepartureTime": "2026-09-23T08:08:59+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Asker"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:08:59+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:08:59+02:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Asker stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:23:59+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:23:59+02:00"
+                  }
+                ]
+              }
+            }
+          ],
+          "b": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T08:25:00+02:00",
+              "expectedDepartureTime": "2026-09-23T08:25:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Oslo S"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "R14"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Asker stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:26:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:26:00+02:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Sandvika stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:40:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:40:00+02:00"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "trips": [
+          {
+            "from": "NSR:StopPlace:60736",
+            "to": "NSR:StopPlace:610",
+            "result": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T08:05:00+02:00",
+                "arrTime": "2026-09-23T08:20:00+02:00",
+                "fromName": "Spikkestad stasjon",
+                "toName": "Asker stasjon"
+              },
+              {
+                "line": "R14",
+                "depTime": "2026-09-23T08:25:00+02:00",
+                "arrTime": "2026-09-23T08:40:00+02:00",
+                "fromName": "Asker stasjon",
+                "toName": "Sandvika stasjon"
+              }
+            ]
+          }
+        ],
+        "stops": [
+          {
+            "stopId": "NSR:StopPlace:59616",
+            "result": []
+          }
+        ]
+      },
+      "expected": {
+        "status": {
+          "work": {
+            "planText": "L1 08:08 Spikkestad → 08:23 Asker，换乘R14 08:25 Asker → 08:40 Sandvika（全程 31 分钟）",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T08:08:59+02:00",
+                "arrTime": "2026-09-23T08:23:59+02:00",
+                "fromName": "Spikkestad",
+                "toName": "Asker",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              },
+              {
+                "line": "R14",
+                "depTime": "2026-09-23T08:25:00+02:00",
+                "arrTime": "2026-09-23T08:40:00+02:00",
+                "fromName": "Asker",
+                "toName": "Sandvika",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "最快方案（实时时刻），全程约 31 分钟，含 1 次换乘",
+            "alternatives": [],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "home": {
+            "planText": "",
+            "legs": [],
+            "adviceLevel": "UNKNOWN",
+            "adviceText": "未找到班次。请稍后刷新重试",
+            "alternatives": [],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "transfer": {
+            "transferStation": "Asker",
+            "options": [],
+            "updatedAt": "2026-09-23T08:00:00+02:00"
+          },
+          "updatedAt": "2026-09-23T08:00:00+02:00",
+          "originStation": "Spikkestad",
+          "destinationStation": "Sandvika"
+        },
+        "error": false,
+        "calls": [
+          "fastestTrip:NSR:StopPlace:60736->NSR:StopPlace:610@2026-09-23T08:00:00+02:00",
+          "fetchBoth:NSR:StopPlace:60736,NSR:StopPlace:610@2026-09-23T07:15:00+02:00",
+          "fetchStop:NSR:StopPlace:59616@2026-09-23T07:15:00+02:00"
+        ]
+      }
+    },
+    {
+      "name": "C2：findCall ±3 分钟内并列时取列表第一个（-2 与 +2）",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T08:00:00+02:00",
+        "settings": {
+          "originStation": "Spikkestad",
+          "destStation": "Sandvika"
+        },
+        "both": {
+          "a": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T08:07:00+02:00",
+              "expectedDepartureTime": "2026-09-23T08:07:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Asker"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:07:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:07:00+02:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Asker stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:22:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:22:00+02:00"
+                  }
+                ]
+              }
+            },
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T08:03:00+02:00",
+              "expectedDepartureTime": "2026-09-23T08:03:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Asker"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:03:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:03:00+02:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Asker stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:18:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:18:00+02:00"
+                  }
+                ]
+              }
+            }
+          ],
+          "b": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T08:25:00+02:00",
+              "expectedDepartureTime": "2026-09-23T08:25:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Oslo S"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "R14"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Asker stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:26:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:26:00+02:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Sandvika stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:40:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:40:00+02:00"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "trips": [
+          {
+            "from": "NSR:StopPlace:60736",
+            "to": "NSR:StopPlace:610",
+            "result": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T08:05:00+02:00",
+                "arrTime": "2026-09-23T08:20:00+02:00",
+                "fromName": "Spikkestad stasjon",
+                "toName": "Asker stasjon"
+              },
+              {
+                "line": "R14",
+                "depTime": "2026-09-23T08:25:00+02:00",
+                "arrTime": "2026-09-23T08:40:00+02:00",
+                "fromName": "Asker stasjon",
+                "toName": "Sandvika stasjon"
+              }
+            ]
+          }
+        ],
+        "stops": [
+          {
+            "stopId": "NSR:StopPlace:59616",
+            "result": []
+          }
+        ]
+      },
+      "expected": {
+        "status": {
+          "work": {
+            "planText": "L1 08:07 Spikkestad → 08:22 Asker，换乘R14 08:25 Asker → 08:40 Sandvika（全程 33 分钟）",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T08:07:00+02:00",
+                "arrTime": "2026-09-23T08:22:00+02:00",
+                "fromName": "Spikkestad",
+                "toName": "Asker",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              },
+              {
+                "line": "R14",
+                "depTime": "2026-09-23T08:25:00+02:00",
+                "arrTime": "2026-09-23T08:40:00+02:00",
+                "fromName": "Asker",
+                "toName": "Sandvika",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "最快方案（实时时刻），全程约 33 分钟，含 1 次换乘",
+            "alternatives": [],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "home": {
+            "planText": "",
+            "legs": [],
+            "adviceLevel": "UNKNOWN",
+            "adviceText": "未找到班次。请稍后刷新重试",
+            "alternatives": [],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "transfer": {
+            "transferStation": "Asker",
+            "options": [],
+            "updatedAt": "2026-09-23T08:00:00+02:00"
+          },
+          "updatedAt": "2026-09-23T08:00:00+02:00",
+          "originStation": "Spikkestad",
+          "destinationStation": "Sandvika"
+        },
+        "error": false,
+        "calls": [
+          "fastestTrip:NSR:StopPlace:60736->NSR:StopPlace:610@2026-09-23T08:00:00+02:00",
+          "fetchBoth:NSR:StopPlace:60736,NSR:StopPlace:610@2026-09-23T07:15:00+02:00",
+          "fetchStop:NSR:StopPlace:59616@2026-09-23T07:15:00+02:00"
+        ]
+      }
+    },
+    {
+      "name": "D：跨站匹配第二路径（findCall 的 arrivalAt(fromName)，先 A 后 B）",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T08:00:00+02:00",
+        "settings": {
+          "originStation": "Spikkestad",
+          "destStation": "Sandvika"
+        },
+        "both": {
+          "a": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T08:05:00+02:00",
+              "expectedDepartureTime": "2026-09-23T08:05:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Asker"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:05:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:05:00+02:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Asker stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:20:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:20:00+02:00"
+                  }
+                ]
+              }
+            }
+          ],
+          "b": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T08:40:00+02:00",
+              "expectedDepartureTime": "2026-09-23T08:40:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Oslo S"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "R14"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Asker stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:26:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:26:00+02:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Sandvika stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:40:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:40:00+02:00"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "trips": [
+          {
+            "from": "NSR:StopPlace:60736",
+            "to": "NSR:StopPlace:610",
+            "result": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T08:05:00+02:00",
+                "arrTime": "2026-09-23T08:20:00+02:00",
+                "fromName": "Spikkestad stasjon",
+                "toName": "Asker stasjon"
+              },
+              {
+                "line": "R14",
+                "depTime": "2026-09-23T08:25:00+02:00",
+                "arrTime": "2026-09-23T08:40:00+02:00",
+                "fromName": "Asker stasjon",
+                "toName": "Sandvika stasjon"
+              }
+            ]
+          }
+        ],
+        "stops": [
+          {
+            "stopId": "NSR:StopPlace:59616",
+            "result": []
+          }
+        ]
+      },
+      "expected": {
+        "status": {
+          "work": {
+            "planText": "L1 08:05 Spikkestad → 08:20 Asker，换乘R14 08:40 Asker → 08:40 Sandvika（全程 35 分钟）",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T08:05:00+02:00",
+                "arrTime": "2026-09-23T08:20:00+02:00",
+                "fromName": "Spikkestad",
+                "toName": "Asker",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              },
+              {
+                "line": "R14",
+                "depTime": "2026-09-23T08:40:00+02:00",
+                "arrTime": "2026-09-23T08:40:00+02:00",
+                "fromName": "Asker",
+                "toName": "Sandvika",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "最快方案（实时时刻），全程约 35 分钟，含 1 次换乘",
+            "alternatives": [],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "home": {
+            "planText": "",
+            "legs": [],
+            "adviceLevel": "UNKNOWN",
+            "adviceText": "未找到班次。请稍后刷新重试",
+            "alternatives": [],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "transfer": {
+            "transferStation": "Asker",
+            "options": [],
+            "updatedAt": "2026-09-23T08:00:00+02:00"
+          },
+          "updatedAt": "2026-09-23T08:00:00+02:00",
+          "originStation": "Spikkestad",
+          "destinationStation": "Sandvika"
+        },
+        "error": false,
+        "calls": [
+          "fastestTrip:NSR:StopPlace:60736->NSR:StopPlace:610@2026-09-23T08:00:00+02:00",
+          "fetchBoth:NSR:StopPlace:60736,NSR:StopPlace:610@2026-09-23T07:15:00+02:00",
+          "fetchStop:NSR:StopPlace:59616@2026-09-23T07:15:00+02:00"
+        ]
+      }
+    },
+    {
+      "name": "E1：RETURN 回家选段，L1 不是最后一段仍取到（L1 段匹配到实时班次，对向车非 NONE；误取最后一段 R14 则为 NONE）",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T15:00:00+02:00",
+        "settings": {
+          "originStation": "Spikkestad",
+          "destStation": "Sandvika"
+        },
+        "both": {
+          "a": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T15:10:00+02:00",
+              "expectedDepartureTime": "2026-09-23T15:10:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Lillestrøm"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T15:40:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T15:40:00+02:00"
+                  }
+                ]
+              }
+            }
+          ],
+          "b": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T15:05:00+02:00",
+              "expectedDepartureTime": "2026-09-23T15:05:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Spikkestad"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Sandvika stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T15:05:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T15:05:00+02:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Asker stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T15:20:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T15:20:00+02:00"
+                  }
+                ]
+              }
+            },
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T15:20:00+02:00",
+              "expectedDepartureTime": "2026-09-23T15:20:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Spikkestad"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad"
+                    },
+                    "aimedArrivalTime": "2026-09-23T15:50:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T15:50:00+02:00"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "trips": [
+          {
+            "from": "NSR:StopPlace:60736",
+            "to": "NSR:StopPlace:610",
+            "result": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T15:10:00+02:00",
+                "arrTime": "2026-09-23T15:40:00+02:00",
+                "fromName": "Spikkestad stasjon",
+                "toName": "Sandvika stasjon"
+              }
+            ]
+          },
+          {
+            "from": "NSR:StopPlace:610",
+            "to": "NSR:StopPlace:60736",
+            "result": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T15:05:00+02:00",
+                "arrTime": "2026-09-23T15:20:00+02:00",
+                "fromName": "Sandvika stasjon",
+                "toName": "Asker stasjon"
+              },
+              {
+                "line": "R14",
+                "depTime": "2026-09-23T15:25:00+02:00",
+                "arrTime": "2026-09-23T15:55:00+02:00",
+                "fromName": "Asker stasjon",
+                "toName": "Spikkestad stasjon"
+              }
+            ]
+          }
+        ],
+        "stops": []
+      },
+      "expected": {
+        "status": {
+          "work": {
+            "planText": "L1 15:10 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T15:10:00+02:00",
+                "arrTime": "2026-09-23T15:40:00+02:00",
+                "fromName": "Spikkestad",
+                "toName": "Sandvika",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "正点！L1 15:10 发车，预计 15:40 到 Sandvika",
+            "alternatives": [
+              "L1 15:10 开往Lillestrøm"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "home": {
+            "planText": "L1 15:05 Sandvika → 15:20 Asker，换乘R14 15:25 Asker → 15:55 Spikkestad（全程 50 分钟）",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T15:05:00+02:00",
+                "arrTime": "2026-09-23T15:20:00+02:00",
+                "fromName": "Sandvika",
+                "toName": "Asker",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              },
+              {
+                "line": "R14",
+                "depTime": "2026-09-23T15:25:00+02:00",
+                "arrTime": "2026-09-23T15:55:00+02:00",
+                "fromName": "Asker",
+                "toName": "Spikkestad",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": false
+              }
+            ],
+            "adviceLevel": "UNKNOWN",
+            "adviceText": "实时信息未知，暂无法确认是否正点；请以车站广播和 Entur 最新信息为准",
+            "alternatives": [
+              "L1 15:20 开往Spikkestad"
+            ],
+            "oppositeText": "对向 L1（Lillestrøm 方向）15:10 正点",
+            "oppositeState": "ON_TIME"
+          },
+          "transfer": null,
+          "updatedAt": "2026-09-23T15:00:00+02:00",
+          "originStation": "Spikkestad",
+          "destinationStation": "Sandvika"
+        },
+        "error": false,
+        "calls": [
+          "fastestTrip:NSR:StopPlace:60736->NSR:StopPlace:610@2026-09-23T15:00:00+02:00",
+          "fastestTrip:NSR:StopPlace:610->NSR:StopPlace:60736@2026-09-23T15:00:00+02:00",
+          "fetchBoth:NSR:StopPlace:60736,NSR:StopPlace:610@2026-09-23T14:15:00+02:00"
+        ]
+      }
+    },
+    {
+      "name": "E2：RETURN 回家选段，行程里没有 L1 段 → 退回最后一段",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T15:00:00+02:00",
+        "settings": {
+          "originStation": "Spikkestad",
+          "destStation": "Sandvika"
+        },
+        "both": {
+          "a": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T15:10:00+02:00",
+              "expectedDepartureTime": "2026-09-23T15:10:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Lillestrøm"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T15:40:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T15:40:00+02:00"
+                  }
+                ]
+              }
+            }
+          ],
+          "b": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T15:20:00+02:00",
+              "expectedDepartureTime": "2026-09-23T15:20:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Spikkestad"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad"
+                    },
+                    "aimedArrivalTime": "2026-09-23T15:50:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T15:50:00+02:00"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "trips": [
+          {
+            "from": "NSR:StopPlace:60736",
+            "to": "NSR:StopPlace:610",
+            "result": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T15:10:00+02:00",
+                "arrTime": "2026-09-23T15:40:00+02:00",
+                "fromName": "Spikkestad stasjon",
+                "toName": "Sandvika stasjon"
+              }
+            ]
+          },
+          {
+            "from": "NSR:StopPlace:610",
+            "to": "NSR:StopPlace:60736",
+            "result": [
+              {
+                "line": "R14",
+                "depTime": "2026-09-23T15:05:00+02:00",
+                "arrTime": "2026-09-23T15:20:00+02:00",
+                "fromName": "Sandvika stasjon",
+                "toName": "Asker stasjon"
+              },
+              {
+                "line": "R14",
+                "depTime": "2026-09-23T15:25:00+02:00",
+                "arrTime": "2026-09-23T15:55:00+02:00",
+                "fromName": "Asker stasjon",
+                "toName": "Spikkestad stasjon"
+              }
+            ]
+          }
+        ],
+        "stops": []
+      },
+      "expected": {
+        "status": {
+          "work": {
+            "planText": "L1 15:10 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T15:10:00+02:00",
+                "arrTime": "2026-09-23T15:40:00+02:00",
+                "fromName": "Spikkestad",
+                "toName": "Sandvika",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "正点！L1 15:10 发车，预计 15:40 到 Sandvika",
+            "alternatives": [
+              "L1 15:10 开往Lillestrøm"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "home": {
+            "planText": "R14 15:05 Sandvika → 15:20 Asker，换乘R14 15:25 Asker → 15:55 Spikkestad（全程 50 分钟）",
+            "legs": [
+              {
+                "line": "R14",
+                "depTime": "2026-09-23T15:05:00+02:00",
+                "arrTime": "2026-09-23T15:20:00+02:00",
+                "fromName": "Sandvika",
+                "toName": "Asker",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": false
+              },
+              {
+                "line": "R14",
+                "depTime": "2026-09-23T15:25:00+02:00",
+                "arrTime": "2026-09-23T15:55:00+02:00",
+                "fromName": "Asker",
+                "toName": "Spikkestad",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": false
+              }
+            ],
+            "adviceLevel": "UNKNOWN",
+            "adviceText": "实时信息未知，暂无法确认是否正点；请以车站广播和 Entur 最新信息为准",
+            "alternatives": [
+              "L1 15:20 开往Spikkestad"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "transfer": null,
+          "updatedAt": "2026-09-23T15:00:00+02:00",
+          "originStation": "Spikkestad",
+          "destinationStation": "Sandvika"
+        },
+        "error": false,
+        "calls": [
+          "fastestTrip:NSR:StopPlace:60736->NSR:StopPlace:610@2026-09-23T15:00:00+02:00",
+          "fastestTrip:NSR:StopPlace:610->NSR:StopPlace:60736@2026-09-23T15:00:00+02:00",
+          "fetchBoth:NSR:StopPlace:60736,NSR:StopPlace:610@2026-09-23T14:15:00+02:00"
+        ]
+      }
+    },
+    {
+      "name": "F：站名大小写 originStation \"asker\" → find 精确匹配失败 → 未配置，不发请求",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T08:00:00+02:00",
+        "settings": {
+          "originStation": "asker",
+          "destStation": "Sandvika"
+        },
+        "both": {
+          "$error": "不应被调用"
+        },
+        "trips": [],
+        "stops": []
+      },
+      "expected": {
+        "status": null,
+        "error": true,
+        "calls": []
+      }
+    },
+    {
+      "name": "G1：now=10:00 默认设置 → OUTSIDE，只调用 fetchBoth",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T10:00:00+02:00",
+        "settings": {
+          "originStation": "Spikkestad",
+          "destStation": "Sandvika"
+        },
+        "both": {
+          "a": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T10:10:00+02:00",
+              "expectedDepartureTime": "2026-09-23T10:10:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Lillestrøm"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T10:25:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T10:25:00+02:00"
+                  }
+                ]
+              }
+            }
+          ],
+          "b": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T10:20:00+02:00",
+              "expectedDepartureTime": "2026-09-23T10:20:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Spikkestad"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad"
+                    },
+                    "aimedArrivalTime": "2026-09-23T10:35:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T10:35:00+02:00"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "trips": [],
+        "stops": []
+      },
+      "expected": {
+        "status": {
+          "work": {
+            "planText": "L1 10:10 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T10:10:00+02:00",
+                "arrTime": "2026-09-23T10:25:00+02:00",
+                "fromName": "Spikkestad",
+                "toName": "Sandvika",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "正点！L1 10:10 发车，预计 10:25 到 Sandvika",
+            "alternatives": [
+              "L1 10:10 开往Lillestrøm"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "home": {
+            "planText": "L1 10:20 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T10:20:00+02:00",
+                "arrTime": "2026-09-23T10:35:00+02:00",
+                "fromName": "Sandvika",
+                "toName": "Spikkestad",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "正点！L1 10:20 发车，预计 10:35 到 Spikkestad",
+            "alternatives": [
+              "L1 10:20 开往Spikkestad"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "transfer": null,
+          "updatedAt": "2026-09-23T10:00:00+02:00",
+          "originStation": "Spikkestad",
+          "destinationStation": "Sandvika"
+        },
+        "error": false,
+        "calls": [
+          "fetchBoth:NSR:StopPlace:60736,NSR:StopPlace:610@2026-09-23T09:15:00+02:00"
+        ]
+      }
+    },
+    {
+      "name": "G2：workWindowStart 06:00、now 06:30 → WORK",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T06:30:00+02:00",
+        "settings": {
+          "originStation": "Spikkestad",
+          "destStation": "Sandvika",
+          "workWindowStart": "06:00"
+        },
+        "both": {
+          "a": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T06:40:00+02:00",
+              "expectedDepartureTime": "2026-09-23T06:40:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Lillestrøm"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad"
+                    },
+                    "aimedArrivalTime": "2026-09-23T06:40:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T06:40:00+02:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T07:10:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T07:10:00+02:00"
+                  }
+                ]
+              }
+            }
+          ],
+          "b": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T06:50:00+02:00",
+              "expectedDepartureTime": "2026-09-23T06:50:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Spikkestad"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad"
+                    },
+                    "aimedArrivalTime": "2026-09-23T07:20:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T07:20:00+02:00"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "trips": [
+          {
+            "from": "NSR:StopPlace:60736",
+            "to": "NSR:StopPlace:610",
+            "result": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T06:40:00+02:00",
+                "arrTime": "2026-09-23T07:10:00+02:00",
+                "fromName": "Spikkestad stasjon",
+                "toName": "Sandvika stasjon"
+              }
+            ]
+          }
+        ],
+        "stops": [
+          {
+            "stopId": "NSR:StopPlace:59616",
+            "result": []
+          }
+        ]
+      },
+      "expected": {
+        "status": {
+          "work": {
+            "planText": "L1 06:40 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T06:40:00+02:00",
+                "arrTime": "2026-09-23T07:10:00+02:00",
+                "fromName": "Spikkestad",
+                "toName": "Sandvika",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "正点！L1 06:40 发车，预计 07:10 到 Sandvika",
+            "alternatives": [
+              "L1 06:40 开往Lillestrøm"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "home": {
+            "planText": "L1 06:50 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T06:50:00+02:00",
+                "arrTime": "2026-09-23T07:20:00+02:00",
+                "fromName": "Sandvika",
+                "toName": "Spikkestad",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "正点！L1 06:50 发车，预计 07:20 到 Spikkestad",
+            "alternatives": [
+              "L1 06:50 开往Spikkestad"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "transfer": {
+            "transferStation": "Asker",
+            "options": [],
+            "updatedAt": "2026-09-23T06:30:00+02:00"
+          },
+          "updatedAt": "2026-09-23T06:30:00+02:00",
+          "originStation": "Spikkestad",
+          "destinationStation": "Sandvika"
+        },
+        "error": false,
+        "calls": [
+          "fastestTrip:NSR:StopPlace:60736->NSR:StopPlace:610@2026-09-23T06:30:00+02:00",
+          "fetchBoth:NSR:StopPlace:60736,NSR:StopPlace:610@2026-09-23T05:45:00+02:00",
+          "fetchStop:NSR:StopPlace:59616@2026-09-23T05:45:00+02:00"
+        ]
+      }
+    },
+    {
+      "name": "G3：跨午夜窗口（returnWindowStart 22:00、returnWindowEnd 01:00、now 00:30）→ RETURN",
+      "from": [],
+      "input": {
+        "now": "2026-09-24T00:30:00+02:00",
+        "settings": {
+          "originStation": "Spikkestad",
+          "destStation": "Sandvika",
+          "returnWindowStart": "22:00",
+          "returnWindowEnd": "01:00"
+        },
+        "both": {
+          "a": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-24T00:40:00+02:00",
+              "expectedDepartureTime": "2026-09-24T00:40:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Lillestrøm"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-24T01:10:00+02:00",
+                    "expectedArrivalTime": "2026-09-24T01:10:00+02:00"
+                  }
+                ]
+              }
+            }
+          ],
+          "b": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-24T00:50:00+02:00",
+              "expectedDepartureTime": "2026-09-24T00:50:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Spikkestad"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad"
+                    },
+                    "aimedArrivalTime": "2026-09-24T01:20:00+02:00",
+                    "expectedArrivalTime": "2026-09-24T01:20:00+02:00"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "trips": [
+          {
+            "from": "NSR:StopPlace:60736",
+            "to": "NSR:StopPlace:610",
+            "result": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-24T00:40:00+02:00",
+                "arrTime": "2026-09-24T01:10:00+02:00",
+                "fromName": "Spikkestad stasjon",
+                "toName": "Sandvika stasjon"
+              }
+            ]
+          },
+          {
+            "from": "NSR:StopPlace:610",
+            "to": "NSR:StopPlace:60736",
+            "result": null
+          }
+        ],
+        "stops": []
+      },
+      "expected": {
+        "status": {
+          "work": {
+            "planText": "L1 00:40 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-24T00:40:00+02:00",
+                "arrTime": "2026-09-24T01:10:00+02:00",
+                "fromName": "Spikkestad",
+                "toName": "Sandvika",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "正点！L1 00:40 发车，预计 01:10 到 Sandvika",
+            "alternatives": [
+              "L1 00:40 开往Lillestrøm"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "home": {
+            "planText": "L1 00:50 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-24T00:50:00+02:00",
+                "arrTime": "2026-09-24T01:20:00+02:00",
+                "fromName": "Sandvika",
+                "toName": "Spikkestad",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "正点！L1 00:50 发车，预计 01:20 到 Spikkestad",
+            "alternatives": [
+              "L1 00:50 开往Spikkestad"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "transfer": null,
+          "updatedAt": "2026-09-24T00:30:00+02:00",
+          "originStation": "Spikkestad",
+          "destinationStation": "Sandvika"
+        },
+        "error": false,
+        "calls": [
+          "fastestTrip:NSR:StopPlace:60736->NSR:StopPlace:610@2026-09-24T00:30:00+02:00",
+          "fastestTrip:NSR:StopPlace:610->NSR:StopPlace:60736@2026-09-24T00:30:00+02:00",
+          "fetchBoth:NSR:StopPlace:60736,NSR:StopPlace:610@2026-09-23T23:45:00+02:00"
+        ]
+      }
+    },
+    {
+      "name": "H：origin 即换乘站（Asker → Sandvika）→ 不调用 fetchStop，transfer 为 null",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T08:00:00+02:00",
+        "settings": {
+          "originStation": "Asker",
+          "destStation": "Sandvika"
+        },
+        "both": {
+          "a": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T08:10:00+02:00",
+              "expectedDepartureTime": "2026-09-23T08:10:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Lillestrøm"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Sandvika"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:25:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:25:00+02:00"
+                  }
+                ]
+              }
+            }
+          ],
+          "b": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T08:20:00+02:00",
+              "expectedDepartureTime": "2026-09-23T08:20:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Spikkestad"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Asker"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:35:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:35:00+02:00"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "trips": [
+          {
+            "from": "NSR:StopPlace:59616",
+            "to": "NSR:StopPlace:610",
+            "result": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T08:10:00+02:00",
+                "arrTime": "2026-09-23T08:25:00+02:00",
+                "fromName": "Asker stasjon",
+                "toName": "Sandvika stasjon"
+              }
+            ]
+          }
+        ],
+        "stops": []
+      },
+      "expected": {
+        "status": {
+          "work": {
+            "planText": "L1 08:10 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T08:10:00+02:00",
+                "arrTime": "2026-09-23T08:25:00+02:00",
+                "fromName": "Asker",
+                "toName": "Sandvika",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "正点！L1 08:10 发车，预计 08:25 到 Sandvika",
+            "alternatives": [
+              "L1 08:10 开往Lillestrøm"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "home": {
+            "planText": "L1 08:20 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T08:20:00+02:00",
+                "arrTime": "2026-09-23T08:35:00+02:00",
+                "fromName": "Sandvika",
+                "toName": "Asker",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "正点！L1 08:20 发车，预计 08:35 到 Asker",
+            "alternatives": [
+              "L1 08:20 开往Spikkestad"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "transfer": null,
+          "updatedAt": "2026-09-23T08:00:00+02:00",
+          "originStation": "Asker",
+          "destinationStation": "Sandvika"
+        },
+        "error": false,
+        "calls": [
+          "fastestTrip:NSR:StopPlace:59616->NSR:StopPlace:610@2026-09-23T08:00:00+02:00",
+          "fetchBoth:NSR:StopPlace:59616,NSR:StopPlace:610@2026-09-23T07:15:00+02:00"
+        ]
+      }
+    },
+    {
+      "name": "I：WORK 两段行程，对向车（firstLegCall 与对向车都只在 callsA 中找）状态非 NONE",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T08:00:00+02:00",
+        "settings": {
+          "originStation": "Spikkestad",
+          "destStation": "Sandvika"
+        },
+        "both": {
+          "a": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T08:05:00+02:00",
+              "expectedDepartureTime": "2026-09-23T08:05:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Asker"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:05:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:05:00+02:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Asker stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:20:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:20:00+02:00"
+                  }
+                ]
+              }
+            },
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T08:07:00+02:00",
+              "expectedDepartureTime": "2026-09-23T08:07:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Spikkestad"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:07:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:07:00+02:00"
+                  }
+                ]
+              }
+            }
+          ],
+          "b": [
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T08:25:00+02:00",
+              "expectedDepartureTime": "2026-09-23T08:25:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Oslo S"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "R14"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Asker stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:26:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:26:00+02:00"
+                  },
+                  {
+                    "quay": {
+                      "name": "Sandvika stasjon"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:40:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:40:00+02:00"
+                  }
+                ]
+              }
+            },
+            {
+              "realtime": true,
+              "aimedDepartureTime": "2026-09-23T08:30:00+02:00",
+              "expectedDepartureTime": "2026-09-23T08:30:00+02:00",
+              "cancellation": false,
+              "destinationDisplay": {
+                "frontText": "Spikkestad"
+              },
+              "serviceJourney": {
+                "journeyPattern": {
+                  "line": {
+                    "publicCode": "L1"
+                  }
+                },
+                "estimatedCalls": [
+                  {
+                    "quay": {
+                      "name": "Spikkestad"
+                    },
+                    "aimedArrivalTime": "2026-09-23T08:50:00+02:00",
+                    "expectedArrivalTime": "2026-09-23T08:50:00+02:00"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "trips": [
+          {
+            "from": "NSR:StopPlace:60736",
+            "to": "NSR:StopPlace:610",
+            "result": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T08:05:00+02:00",
+                "arrTime": "2026-09-23T08:20:00+02:00",
+                "fromName": "Spikkestad stasjon",
+                "toName": "Asker stasjon"
+              },
+              {
+                "line": "R14",
+                "depTime": "2026-09-23T08:25:00+02:00",
+                "arrTime": "2026-09-23T08:40:00+02:00",
+                "fromName": "Asker stasjon",
+                "toName": "Sandvika stasjon"
+              }
+            ]
+          }
+        ],
+        "stops": [
+          {
+            "stopId": "NSR:StopPlace:59616",
+            "result": []
+          }
+        ]
+      },
+      "expected": {
+        "status": {
+          "work": {
+            "planText": "L1 08:05 Spikkestad → 08:20 Asker，换乘R14 08:25 Asker → 08:40 Sandvika（全程 35 分钟）",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T08:05:00+02:00",
+                "arrTime": "2026-09-23T08:20:00+02:00",
+                "fromName": "Spikkestad",
+                "toName": "Asker",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              },
+              {
+                "line": "R14",
+                "depTime": "2026-09-23T08:25:00+02:00",
+                "arrTime": "2026-09-23T08:40:00+02:00",
+                "fromName": "Asker",
+                "toName": "Sandvika",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "最快方案（实时时刻），全程约 35 分钟，含 1 次换乘",
+            "alternatives": [],
+            "oppositeText": "对向 L1（Spikkestad 方向）08:07 正点",
+            "oppositeState": "ON_TIME"
+          },
+          "home": {
+            "planText": "L1 08:30 发车",
+            "legs": [
+              {
+                "line": "L1",
+                "depTime": "2026-09-23T08:30:00+02:00",
+                "arrTime": "2026-09-23T08:50:00+02:00",
+                "fromName": "Sandvika",
+                "toName": "Spikkestad",
+                "delayMin": 0,
+                "cancelled": false,
+                "delayKnown": true
+              }
+            ],
+            "adviceLevel": "GOOD",
+            "adviceText": "正点！L1 08:30 发车，预计 08:50 到 Spikkestad",
+            "alternatives": [
+              "L1 08:30 开往Spikkestad"
+            ],
+            "oppositeText": "",
+            "oppositeState": "NONE"
+          },
+          "transfer": {
+            "transferStation": "Asker",
+            "options": [],
+            "updatedAt": "2026-09-23T08:00:00+02:00"
+          },
+          "updatedAt": "2026-09-23T08:00:00+02:00",
+          "originStation": "Spikkestad",
+          "destinationStation": "Sandvika"
+        },
+        "error": false,
+        "calls": [
+          "fastestTrip:NSR:StopPlace:60736->NSR:StopPlace:610@2026-09-23T08:00:00+02:00",
+          "fetchBoth:NSR:StopPlace:60736,NSR:StopPlace:610@2026-09-23T07:15:00+02:00",
+          "fetchStop:NSR:StopPlace:59616@2026-09-23T07:15:00+02:00"
+        ]
+      }
+    }
+  ]
+}

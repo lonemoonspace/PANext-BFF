@@ -1,0 +1,990 @@
+{
+  "subject": "FootballNotifyPolicy.evaluate",
+  "kotlin": "app/src/main/java/com/personalassistant/app/domain/FootballNotifyPolicy.kt",
+  "cases": [
+    {
+      "name": "开赛前 45 分钟触发开赛提醒",
+      "from": [
+        "FootballNotifyPolicyTest.kickoff within 60 minutes notifies"
+      ],
+      "input": {
+        "status": {
+          "nextMatches": [
+            {
+              "idEvent": "m1",
+              "timestamp": "2026-09-10T18:45:00Z",
+              "status": "SCHEDULED",
+              "homeTeam": "Real Madrid",
+              "awayTeam": "Barcelona",
+              "isHome": true,
+              "league": "La Liga"
+            }
+          ]
+        },
+        "now": "2026-09-10T18:00:00Z",
+        "previous": {
+          "kickoffNotifiedIds": [],
+          "finishedNotifiedIds": []
+        }
+      },
+      "expected": {
+        "notifications": [
+          {
+            "title": "皇马 vs Barcelona",
+            "body": "La Liga · 20:45 开球",
+            "matchId": "m1"
+          }
+        ],
+        "newState": {
+          "kickoffNotifiedIds": [
+            "m1"
+          ],
+          "finishedNotifiedIds": []
+        }
+      }
+    },
+    {
+      "name": "开赛前 90 分钟超出窗口不通知",
+      "from": [
+        "FootballNotifyPolicyTest.kickoff more than 60 minutes away does not notify"
+      ],
+      "input": {
+        "status": {
+          "nextMatches": [
+            {
+              "idEvent": "m1",
+              "timestamp": "2026-09-10T19:30:00Z",
+              "status": "SCHEDULED",
+              "homeTeam": "Real Madrid",
+              "awayTeam": "Barcelona",
+              "isHome": true,
+              "league": "La Liga"
+            }
+          ]
+        },
+        "now": "2026-09-10T18:00:00Z",
+        "previous": {
+          "kickoffNotifiedIds": [],
+          "finishedNotifiedIds": []
+        }
+      },
+      "expected": {
+        "notifications": [],
+        "newState": {
+          "kickoffNotifiedIds": [],
+          "finishedNotifiedIds": []
+        }
+      }
+    },
+    {
+      "name": "同一场比赛开赛提醒只发一次：首次",
+      "from": [
+        "FootballNotifyPolicyTest.kickoff reminder for the same match only fires once"
+      ],
+      "input": {
+        "status": {
+          "nextMatches": [
+            {
+              "idEvent": "m1",
+              "timestamp": "2026-09-10T18:45:00Z",
+              "status": "SCHEDULED",
+              "homeTeam": "Real Madrid",
+              "awayTeam": "Barcelona",
+              "isHome": true,
+              "league": "La Liga"
+            }
+          ]
+        },
+        "now": "2026-09-10T18:00:00Z",
+        "previous": {
+          "kickoffNotifiedIds": [],
+          "finishedNotifiedIds": []
+        }
+      },
+      "expected": {
+        "notifications": [
+          {
+            "title": "皇马 vs Barcelona",
+            "body": "La Liga · 20:45 开球",
+            "matchId": "m1"
+          }
+        ],
+        "newState": {
+          "kickoffNotifiedIds": [
+            "m1"
+          ],
+          "finishedNotifiedIds": []
+        }
+      }
+    },
+    {
+      "name": "同一场比赛开赛提醒只发一次：第二次不重复",
+      "from": [
+        "FootballNotifyPolicyTest.kickoff reminder for the same match only fires once"
+      ],
+      "input": {
+        "status": {
+          "nextMatches": [
+            {
+              "idEvent": "m1",
+              "timestamp": "2026-09-10T18:45:00Z",
+              "status": "SCHEDULED",
+              "homeTeam": "Real Madrid",
+              "awayTeam": "Barcelona",
+              "isHome": true,
+              "league": "La Liga"
+            }
+          ]
+        },
+        "now": "2026-09-10T18:10:00Z",
+        "previous": {
+          "kickoffNotifiedIds": [
+            "m1"
+          ],
+          "finishedNotifiedIds": []
+        }
+      },
+      "expected": {
+        "notifications": [],
+        "newState": {
+          "kickoffNotifiedIds": [
+            "m1"
+          ],
+          "finishedNotifiedIds": []
+        }
+      }
+    },
+    {
+      "name": "已结束比赛带比分触发终场通知",
+      "from": [
+        "FootballNotifyPolicyTest.finished match with a score notifies"
+      ],
+      "input": {
+        "status": {
+          "lastMatches": [
+            {
+              "idEvent": "m1",
+              "timestamp": "2026-09-10T16:00:00Z",
+              "status": "FINISHED",
+              "homeTeam": "Real Madrid",
+              "awayTeam": "Barcelona",
+              "homeScore": 3,
+              "awayScore": 1,
+              "isHome": true,
+              "league": "La Liga"
+            }
+          ]
+        },
+        "now": "2026-09-10T18:00:00Z",
+        "previous": {
+          "kickoffNotifiedIds": [],
+          "finishedNotifiedIds": []
+        }
+      },
+      "expected": {
+        "notifications": [
+          {
+            "title": "皇马比赛结束",
+            "body": "Real Madrid 3:1 Barcelona · La Liga",
+            "matchId": "m1"
+          }
+        ],
+        "newState": {
+          "kickoffNotifiedIds": [],
+          "finishedNotifiedIds": [
+            "m1"
+          ]
+        }
+      }
+    },
+    {
+      "name": "同一场终场比分只发一次：首次",
+      "from": [
+        "FootballNotifyPolicyTest.finished score for the same match only fires once"
+      ],
+      "input": {
+        "status": {
+          "lastMatches": [
+            {
+              "idEvent": "m1",
+              "timestamp": "2026-09-10T16:00:00Z",
+              "status": "FINISHED",
+              "homeTeam": "Real Madrid",
+              "awayTeam": "Barcelona",
+              "homeScore": 3,
+              "awayScore": 1,
+              "isHome": true,
+              "league": "La Liga"
+            }
+          ]
+        },
+        "now": "2026-09-10T18:00:00Z",
+        "previous": {
+          "kickoffNotifiedIds": [],
+          "finishedNotifiedIds": []
+        }
+      },
+      "expected": {
+        "notifications": [
+          {
+            "title": "皇马比赛结束",
+            "body": "Real Madrid 3:1 Barcelona · La Liga",
+            "matchId": "m1"
+          }
+        ],
+        "newState": {
+          "kickoffNotifiedIds": [],
+          "finishedNotifiedIds": [
+            "m1"
+          ]
+        }
+      }
+    },
+    {
+      "name": "同一场终场比分只发一次：第二次不重复",
+      "from": [
+        "FootballNotifyPolicyTest.finished score for the same match only fires once"
+      ],
+      "input": {
+        "status": {
+          "lastMatches": [
+            {
+              "idEvent": "m1",
+              "timestamp": "2026-09-10T16:00:00Z",
+              "status": "FINISHED",
+              "homeTeam": "Real Madrid",
+              "awayTeam": "Barcelona",
+              "homeScore": 3,
+              "awayScore": 1,
+              "isHome": true,
+              "league": "La Liga"
+            }
+          ]
+        },
+        "now": "2026-09-10T19:00:00Z",
+        "previous": {
+          "kickoffNotifiedIds": [],
+          "finishedNotifiedIds": [
+            "m1"
+          ]
+        }
+      },
+      "expected": {
+        "notifications": [],
+        "newState": {
+          "kickoffNotifiedIds": [],
+          "finishedNotifiedIds": [
+            "m1"
+          ]
+        }
+      }
+    },
+    {
+      "name": "开赛提醒与终场比分互相独立：开赛提醒",
+      "from": [
+        "FootballNotifyPolicyTest.kickoff reminder and finished score for the same match are independent"
+      ],
+      "input": {
+        "status": {
+          "nextMatches": [
+            {
+              "idEvent": "m1",
+              "timestamp": "2026-09-10T18:30:00Z",
+              "status": "SCHEDULED",
+              "homeTeam": "Real Madrid",
+              "awayTeam": "Barcelona",
+              "isHome": true,
+              "league": "La Liga"
+            }
+          ]
+        },
+        "now": "2026-09-10T18:00:00Z",
+        "previous": {
+          "kickoffNotifiedIds": [],
+          "finishedNotifiedIds": []
+        }
+      },
+      "expected": {
+        "notifications": [
+          {
+            "title": "皇马 vs Barcelona",
+            "body": "La Liga · 20:30 开球",
+            "matchId": "m1"
+          }
+        ],
+        "newState": {
+          "kickoffNotifiedIds": [
+            "m1"
+          ],
+          "finishedNotifiedIds": []
+        }
+      }
+    },
+    {
+      "name": "开赛提醒与终场比分互相独立：两小时后终场比分照常发出",
+      "from": [
+        "FootballNotifyPolicyTest.kickoff reminder and finished score for the same match are independent"
+      ],
+      "input": {
+        "status": {
+          "lastMatches": [
+            {
+              "idEvent": "m1",
+              "timestamp": "2026-09-10T16:00:00Z",
+              "status": "FINISHED",
+              "homeTeam": "Real Madrid",
+              "awayTeam": "Barcelona",
+              "homeScore": 3,
+              "awayScore": 1,
+              "isHome": true,
+              "league": "La Liga"
+            }
+          ]
+        },
+        "now": "2026-09-10T20:00:00Z",
+        "previous": {
+          "kickoffNotifiedIds": [
+            "m1"
+          ],
+          "finishedNotifiedIds": []
+        }
+      },
+      "expected": {
+        "notifications": [
+          {
+            "title": "皇马比赛结束",
+            "body": "Real Madrid 3:1 Barcelona · La Liga",
+            "matchId": "m1"
+          }
+        ],
+        "newState": {
+          "kickoffNotifiedIds": [
+            "m1"
+          ],
+          "finishedNotifiedIds": [
+            "m1"
+          ]
+        }
+      }
+    },
+    {
+      "name": "POSTPONED 状态不触发终场通知",
+      "from": [
+        "FootballNotifyPolicyTest.postponed match does not trigger a finished score notification"
+      ],
+      "input": {
+        "status": {
+          "lastMatches": [
+            {
+              "idEvent": "m1",
+              "timestamp": "2026-09-10T16:00:00Z",
+              "status": "POSTPONED",
+              "homeTeam": "Real Madrid",
+              "awayTeam": "Barcelona",
+              "homeScore": 3,
+              "awayScore": 1,
+              "isHome": true,
+              "league": "La Liga"
+            }
+          ]
+        },
+        "now": "2026-09-10T18:00:00Z",
+        "previous": {
+          "kickoffNotifiedIds": [],
+          "finishedNotifiedIds": []
+        }
+      },
+      "expected": {
+        "notifications": [],
+        "newState": {
+          "kickoffNotifiedIds": [],
+          "finishedNotifiedIds": []
+        }
+      }
+    },
+    {
+      "name": "CANCELLED 状态不触发终场通知",
+      "from": [
+        "FootballNotifyPolicyTest.cancelled match does not trigger a finished score notification"
+      ],
+      "input": {
+        "status": {
+          "lastMatches": [
+            {
+              "idEvent": "m1",
+              "timestamp": "2026-09-10T16:00:00Z",
+              "status": "CANCELLED",
+              "homeTeam": "Real Madrid",
+              "awayTeam": "Barcelona",
+              "homeScore": 3,
+              "awayScore": 1,
+              "isHome": true,
+              "league": "La Liga"
+            }
+          ]
+        },
+        "now": "2026-09-10T18:00:00Z",
+        "previous": {
+          "kickoffNotifiedIds": [],
+          "finishedNotifiedIds": []
+        }
+      },
+      "expected": {
+        "notifications": [],
+        "newState": {
+          "kickoffNotifiedIds": [],
+          "finishedNotifiedIds": []
+        }
+      }
+    },
+    {
+      "name": "开赛提醒正文使用 HH:mm 而非原始 ISO",
+      "from": [
+        "FootballNotifyPolicyTest.kickoff reminder body shows HH-mm not the raw ISO timestamp"
+      ],
+      "input": {
+        "status": {
+          "nextMatches": [
+            {
+              "idEvent": "m1",
+              "timestamp": "2026-09-10T18:45:00Z",
+              "status": "SCHEDULED",
+              "homeTeam": "Real Madrid",
+              "awayTeam": "Barcelona",
+              "isHome": true,
+              "league": "La Liga"
+            }
+          ]
+        },
+        "now": "2026-09-10T18:00:00Z",
+        "previous": {
+          "kickoffNotifiedIds": [],
+          "finishedNotifiedIds": []
+        }
+      },
+      "expected": {
+        "notifications": [
+          {
+            "title": "皇马 vs Barcelona",
+            "body": "La Liga · 20:45 开球",
+            "matchId": "m1"
+          }
+        ],
+        "newState": {
+          "kickoffNotifiedIds": [
+            "m1"
+          ],
+          "finishedNotifiedIds": []
+        }
+      }
+    },
+    {
+      "name": "旧 TheSportsDB 状态码 NS 视为赛前",
+      "from": [
+        "FootballNotifyPolicyTest.legacy TheSportsDB status codes are recognized"
+      ],
+      "input": {
+        "status": {
+          "nextMatches": [
+            {
+              "idEvent": "m1",
+              "timestamp": "2026-09-10T18:30:00Z",
+              "status": "NS",
+              "homeTeam": "Real Madrid",
+              "awayTeam": "Barcelona",
+              "isHome": true,
+              "league": "La Liga"
+            }
+          ]
+        },
+        "now": "2026-09-10T18:00:00Z",
+        "previous": {
+          "kickoffNotifiedIds": [],
+          "finishedNotifiedIds": []
+        }
+      },
+      "expected": {
+        "notifications": [
+          {
+            "title": "皇马 vs Barcelona",
+            "body": "La Liga · 20:30 开球",
+            "matchId": "m1"
+          }
+        ],
+        "newState": {
+          "kickoffNotifiedIds": [
+            "m1"
+          ],
+          "finishedNotifiedIds": []
+        }
+      }
+    },
+    {
+      "name": "旧 TheSportsDB 状态码 FT 视为已结束",
+      "from": [
+        "FootballNotifyPolicyTest.legacy TheSportsDB status codes are recognized"
+      ],
+      "input": {
+        "status": {
+          "lastMatches": [
+            {
+              "idEvent": "m1",
+              "timestamp": "2026-09-10T16:00:00Z",
+              "status": "FT",
+              "homeTeam": "Real Madrid",
+              "awayTeam": "Barcelona",
+              "homeScore": 3,
+              "awayScore": 1,
+              "isHome": true,
+              "league": "La Liga"
+            }
+          ]
+        },
+        "now": "2026-09-10T18:00:00Z",
+        "previous": {
+          "kickoffNotifiedIds": [],
+          "finishedNotifiedIds": []
+        }
+      },
+      "expected": {
+        "notifications": [
+          {
+            "title": "皇马比赛结束",
+            "body": "Real Madrid 3:1 Barcelona · La Liga",
+            "matchId": "m1"
+          }
+        ],
+        "newState": {
+          "kickoffNotifiedIds": [],
+          "finishedNotifiedIds": [
+            "m1"
+          ]
+        }
+      }
+    },
+    {
+      "name": "已结束但没有比分不触发终场通知",
+      "from": [
+        "FootballNotifyPolicyTest.finished status without a score does not notify"
+      ],
+      "input": {
+        "status": {
+          "lastMatches": [
+            {
+              "idEvent": "m1",
+              "timestamp": "2026-09-10T16:00:00Z",
+              "status": "FINISHED",
+              "homeTeam": "Real Madrid",
+              "awayTeam": "Barcelona",
+              "isHome": true,
+              "league": "La Liga"
+            }
+          ]
+        },
+        "now": "2026-09-10T18:00:00Z",
+        "previous": {
+          "kickoffNotifiedIds": [],
+          "finishedNotifiedIds": []
+        }
+      },
+      "expected": {
+        "notifications": [],
+        "newState": {
+          "kickoffNotifiedIds": [],
+          "finishedNotifiedIds": []
+        }
+      }
+    },
+    {
+      "name": "status 为 null 时不产生通知且原样透传状态",
+      "from": [
+        "FootballNotifyPolicyTest.null status produces no notifications and passes previous state through"
+      ],
+      "input": {
+        "status": null,
+        "now": "2026-09-10T18:00:00Z",
+        "previous": {
+          "kickoffNotifiedIds": [
+            "m1"
+          ],
+          "finishedNotifiedIds": []
+        }
+      },
+      "expected": {
+        "notifications": [],
+        "newState": {
+          "kickoffNotifiedIds": [
+            "m1"
+          ],
+          "finishedNotifiedIds": []
+        }
+      }
+    },
+    {
+      "name": "不再展示的比赛 id 会被裁剪",
+      "from": [
+        "FootballNotifyPolicyTest.notified ids for matches no longer present are pruned"
+      ],
+      "input": {
+        "status": {
+          "nextMatches": [
+            {
+              "idEvent": "current-match",
+              "timestamp": "2026-09-10T18:45:00Z",
+              "status": "SCHEDULED",
+              "homeTeam": "Real Madrid",
+              "awayTeam": "Barcelona",
+              "isHome": true,
+              "league": "La Liga"
+            }
+          ]
+        },
+        "now": "2026-09-10T18:00:00Z",
+        "previous": {
+          "kickoffNotifiedIds": [
+            "stale-match"
+          ],
+          "finishedNotifiedIds": [
+            "stale-match"
+          ]
+        }
+      },
+      "expected": {
+        "notifications": [
+          {
+            "title": "皇马 vs Barcelona",
+            "body": "La Liga · 20:45 开球",
+            "matchId": "current-match"
+          }
+        ],
+        "newState": {
+          "kickoffNotifiedIds": [
+            "current-match"
+          ],
+          "finishedNotifiedIds": []
+        }
+      }
+    },
+    {
+      "name": "距开赛恰好 60 分钟仍在提醒窗口内",
+      "from": [],
+      "input": {
+        "status": {
+          "nextMatches": [
+            {
+              "idEvent": "m1",
+              "timestamp": "2026-09-10T19:00:00Z",
+              "status": "SCHEDULED",
+              "homeTeam": "Real Madrid",
+              "awayTeam": "Barcelona",
+              "isHome": true,
+              "league": "La Liga"
+            }
+          ]
+        },
+        "now": "2026-09-10T18:00:00Z",
+        "previous": {
+          "kickoffNotifiedIds": [],
+          "finishedNotifiedIds": []
+        }
+      },
+      "expected": {
+        "notifications": [
+          {
+            "title": "皇马 vs Barcelona",
+            "body": "La Liga · 21:00 开球",
+            "matchId": "m1"
+          }
+        ],
+        "newState": {
+          "kickoffNotifiedIds": [
+            "m1"
+          ],
+          "finishedNotifiedIds": []
+        }
+      }
+    },
+    {
+      "name": "距开赛 61 分钟超出提醒窗口",
+      "from": [],
+      "input": {
+        "status": {
+          "nextMatches": [
+            {
+              "idEvent": "m1",
+              "timestamp": "2026-09-10T19:01:00Z",
+              "status": "SCHEDULED",
+              "homeTeam": "Real Madrid",
+              "awayTeam": "Barcelona",
+              "isHome": true,
+              "league": "La Liga"
+            }
+          ]
+        },
+        "now": "2026-09-10T18:00:00Z",
+        "previous": {
+          "kickoffNotifiedIds": [],
+          "finishedNotifiedIds": []
+        }
+      },
+      "expected": {
+        "notifications": [],
+        "newState": {
+          "kickoffNotifiedIds": [],
+          "finishedNotifiedIds": []
+        }
+      }
+    },
+    {
+      "name": "已开赛 30 秒仍落在窗口内触发提醒",
+      "from": [],
+      "input": {
+        "status": {
+          "nextMatches": [
+            {
+              "idEvent": "m1",
+              "timestamp": "2026-09-10T17:59:30Z",
+              "status": "SCHEDULED",
+              "homeTeam": "Real Madrid",
+              "awayTeam": "Barcelona",
+              "isHome": true,
+              "league": "La Liga"
+            }
+          ]
+        },
+        "now": "2026-09-10T18:00:00Z",
+        "previous": {
+          "kickoffNotifiedIds": [],
+          "finishedNotifiedIds": []
+        }
+      },
+      "expected": {
+        "notifications": [
+          {
+            "title": "皇马 vs Barcelona",
+            "body": "La Liga · 19:59 开球",
+            "matchId": "m1"
+          }
+        ],
+        "newState": {
+          "kickoffNotifiedIds": [
+            "m1"
+          ],
+          "finishedNotifiedIds": []
+        }
+      }
+    },
+    {
+      "name": "小写 finished 状态仍被识别为已结束",
+      "from": [],
+      "input": {
+        "status": {
+          "lastMatches": [
+            {
+              "idEvent": "m1",
+              "timestamp": "2026-09-10T16:00:00Z",
+              "status": "finished",
+              "homeTeam": "Real Madrid",
+              "awayTeam": "Barcelona",
+              "homeScore": 3,
+              "awayScore": 1,
+              "isHome": true,
+              "league": "La Liga"
+            }
+          ]
+        },
+        "now": "2026-09-10T18:00:00Z",
+        "previous": {
+          "kickoffNotifiedIds": [],
+          "finishedNotifiedIds": []
+        }
+      },
+      "expected": {
+        "notifications": [
+          {
+            "title": "皇马比赛结束",
+            "body": "Real Madrid 3:1 Barcelona · La Liga",
+            "matchId": "m1"
+          }
+        ],
+        "newState": {
+          "kickoffNotifiedIds": [],
+          "finishedNotifiedIds": [
+            "m1"
+          ]
+        }
+      }
+    },
+    {
+      "name": "idEvent 为空被跳过",
+      "from": [],
+      "input": {
+        "status": {
+          "nextMatches": [
+            {
+              "idEvent": "",
+              "timestamp": "2026-09-10T18:30:00Z",
+              "status": "SCHEDULED",
+              "homeTeam": "Real Madrid",
+              "awayTeam": "Barcelona",
+              "isHome": true,
+              "league": "La Liga"
+            }
+          ]
+        },
+        "now": "2026-09-10T18:00:00Z",
+        "previous": {
+          "kickoffNotifiedIds": [],
+          "finishedNotifiedIds": []
+        }
+      },
+      "expected": {
+        "notifications": [],
+        "newState": {
+          "kickoffNotifiedIds": [],
+          "finishedNotifiedIds": []
+        }
+      }
+    },
+    {
+      "name": "距开赛 60 分 30 秒仍落在窗口内（整分截断）",
+      "from": [],
+      "input": {
+        "status": {
+          "nextMatches": [
+            {
+              "idEvent": "m1",
+              "timestamp": "2026-09-10T19:00:30Z",
+              "status": "SCHEDULED",
+              "homeTeam": "Real Madrid",
+              "awayTeam": "Barcelona",
+              "isHome": true,
+              "league": "La Liga"
+            }
+          ]
+        },
+        "now": "2026-09-10T18:00:00Z",
+        "previous": {
+          "kickoffNotifiedIds": [],
+          "finishedNotifiedIds": []
+        }
+      },
+      "expected": {
+        "notifications": [
+          {
+            "title": "皇马 vs Barcelona",
+            "body": "La Liga · 21:00 开球",
+            "matchId": "m1"
+          }
+        ],
+        "newState": {
+          "kickoffNotifiedIds": [
+            "m1"
+          ],
+          "finishedNotifiedIds": []
+        }
+      }
+    },
+    {
+      "name": "客场比赛：标题取 homeTeam 作为对手",
+      "from": [],
+      "input": {
+        "status": {
+          "nextMatches": [
+            {
+              "idEvent": "m1",
+              "timestamp": "2026-09-10T18:30:00Z",
+              "status": "SCHEDULED",
+              "homeTeam": "Vitoria SC",
+              "awayTeam": "Real Madrid",
+              "isHome": false,
+              "league": "La Liga"
+            }
+          ]
+        },
+        "now": "2026-09-10T18:00:00Z",
+        "previous": {
+          "kickoffNotifiedIds": [],
+          "finishedNotifiedIds": []
+        }
+      },
+      "expected": {
+        "notifications": [
+          {
+            "title": "皇马 vs Vitoria SC",
+            "body": "La Liga · 20:30 开球",
+            "matchId": "m1"
+          }
+        ],
+        "newState": {
+          "kickoffNotifiedIds": [
+            "m1"
+          ],
+          "finishedNotifiedIds": []
+        }
+      }
+    },
+    {
+      "name": "同一次 evaluate 发出两条通知：开赛提醒与终场比分并存，id 升序保留",
+      "from": [],
+      "input": {
+        "status": {
+          "nextMatches": [
+            {
+              "idEvent": "m2",
+              "timestamp": "2026-09-10T18:30:00Z",
+              "status": "SCHEDULED",
+              "homeTeam": "Real Madrid",
+              "awayTeam": "Barcelona",
+              "isHome": true,
+              "league": "La Liga"
+            }
+          ],
+          "lastMatches": [
+            {
+              "idEvent": "m10",
+              "timestamp": "2026-09-10T16:00:00Z",
+              "status": "FINISHED",
+              "homeTeam": "Real Madrid",
+              "awayTeam": "Sevilla",
+              "homeScore": 2,
+              "awayScore": 0,
+              "isHome": true,
+              "league": "La Liga"
+            }
+          ]
+        },
+        "now": "2026-09-10T18:00:00Z",
+        "previous": {
+          "kickoffNotifiedIds": [
+            "m10"
+          ],
+          "finishedNotifiedIds": []
+        }
+      },
+      "expected": {
+        "notifications": [
+          {
+            "title": "皇马 vs Barcelona",
+            "body": "La Liga · 20:30 开球",
+            "matchId": "m2"
+          },
+          {
+            "title": "皇马比赛结束",
+            "body": "Real Madrid 2:0 Sevilla · La Liga",
+            "matchId": "m10"
+          }
+        ],
+        "newState": {
+          "kickoffNotifiedIds": [
+            "m10",
+            "m2"
+          ],
+          "finishedNotifiedIds": [
+            "m10"
+          ]
+        }
+      }
+    }
+  ]
+}

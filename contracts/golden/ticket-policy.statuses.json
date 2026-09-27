@@ -1,0 +1,282 @@
+{
+  "subject": "TicketPolicy.statuses",
+  "kotlin": "app/src/main/java/com/personalassistant/app/domain/TicketPolicy.kt",
+  "cases": [
+    {
+      "name": "空值不算已配置",
+      "from": [
+        "TicketPolicyTest.missing or invalid value means not configured"
+      ],
+      "input": {
+        "transitPassUntil": "",
+        "parkingPassUntil": "",
+        "now": "2026-09-15T10:00:00+02:00"
+      },
+      "expected": []
+    },
+    {
+      "name": "非法格式不算已配置",
+      "from": [
+        "TicketPolicyTest.missing or invalid value means not configured"
+      ],
+      "input": {
+        "transitPassUntil": "not-a-date",
+        "parkingPassUntil": "",
+        "now": "2026-09-15T10:00:00+02:00"
+      },
+      "expected": []
+    },
+    {
+      "name": "纯日期按当天 23:59 处理",
+      "from": [
+        "TicketPolicyTest.legacy values are read at minute precision"
+      ],
+      "input": {
+        "transitPassUntil": "2026-09-20",
+        "parkingPassUntil": "",
+        "now": "2026-09-15T10:00:00+02:00"
+      },
+      "expected": [
+        {
+          "kind": "TRANSIT",
+          "state": "ACTIVE",
+          "until": "2026-09-20T23:59",
+          "daysUntil": 5
+        }
+      ]
+    },
+    {
+      "name": "带秒旧值截掉秒",
+      "from": [
+        "TicketPolicyTest.legacy values are read at minute precision"
+      ],
+      "input": {
+        "transitPassUntil": "2026-09-20T23:59:59",
+        "parkingPassUntil": "",
+        "now": "2026-09-15T10:00:00+02:00"
+      },
+      "expected": [
+        {
+          "kind": "TRANSIT",
+          "state": "ACTIVE",
+          "until": "2026-09-20T23:59",
+          "daysUntil": 5
+        }
+      ]
+    },
+    {
+      "name": "截止分钟内提前 59 秒仍有效",
+      "from": [
+        "TicketPolicyTest.ticket stays valid through its final minute"
+      ],
+      "input": {
+        "transitPassUntil": "2026-09-15T10:00",
+        "parkingPassUntil": "",
+        "now": "2026-09-15T10:00:59+02:00"
+      },
+      "expected": [
+        {
+          "kind": "TRANSIT",
+          "state": "EXPIRING",
+          "until": "2026-09-15T10:00",
+          "daysUntil": 0
+        }
+      ]
+    },
+    {
+      "name": "过期止 1 分钟后失效",
+      "from": [
+        "TicketPolicyTest.ticket stays valid through its final minute"
+      ],
+      "input": {
+        "transitPassUntil": "2026-09-15T10:00",
+        "parkingPassUntil": "",
+        "now": "2026-09-15T10:01:00+02:00"
+      },
+      "expected": [
+        {
+          "kind": "TRANSIT",
+          "state": "EXPIRED",
+          "until": "2026-09-15T10:00",
+          "daysUntil": 0
+        }
+      ]
+    },
+    {
+      "name": "整 3 天仍是 ACTIVE",
+      "from": [
+        "TicketPolicyTest.state and remaining text across calendar days"
+      ],
+      "input": {
+        "transitPassUntil": "2026-09-18T23:59:59",
+        "parkingPassUntil": "",
+        "now": "2026-09-15T10:00:00+02:00"
+      },
+      "expected": [
+        {
+          "kind": "TRANSIT",
+          "state": "ACTIVE",
+          "until": "2026-09-18T23:59",
+          "daysUntil": 3
+        }
+      ]
+    },
+    {
+      "name": "剩 2 天进入提醒期",
+      "from": [
+        "TicketPolicyTest.state and remaining text across calendar days"
+      ],
+      "input": {
+        "transitPassUntil": "2026-09-17T23:59:59",
+        "parkingPassUntil": "",
+        "now": "2026-09-15T10:00:00+02:00"
+      },
+      "expected": [
+        {
+          "kind": "TRANSIT",
+          "state": "EXPIRING",
+          "until": "2026-09-17T23:59",
+          "daysUntil": 2
+        }
+      ]
+    },
+    {
+      "name": "明天到期",
+      "from": [
+        "TicketPolicyTest.state and remaining text across calendar days"
+      ],
+      "input": {
+        "transitPassUntil": "2026-09-16T08:00:00",
+        "parkingPassUntil": "",
+        "now": "2026-09-15T10:00:00+02:00"
+      },
+      "expected": [
+        {
+          "kind": "TRANSIT",
+          "state": "EXPIRING",
+          "until": "2026-09-16T08:00",
+          "daysUntil": 1
+        }
+      ]
+    },
+    {
+      "name": "今天到期",
+      "from": [
+        "TicketPolicyTest.state and remaining text across calendar days"
+      ],
+      "input": {
+        "transitPassUntil": "2026-09-15T23:59:59",
+        "parkingPassUntil": "",
+        "now": "2026-09-15T10:00:00+02:00"
+      },
+      "expected": [
+        {
+          "kind": "TRANSIT",
+          "state": "EXPIRING",
+          "until": "2026-09-15T23:59",
+          "daysUntil": 0
+        }
+      ]
+    },
+    {
+      "name": "已过期",
+      "from": [
+        "TicketPolicyTest.state and remaining text across calendar days"
+      ],
+      "input": {
+        "transitPassUntil": "2026-09-15T09:59:59",
+        "parkingPassUntil": "",
+        "now": "2026-09-15T10:00:00+02:00"
+      },
+      "expected": [
+        {
+          "kind": "TRANSIT",
+          "state": "EXPIRED",
+          "until": "2026-09-15T09:59",
+          "daysUntil": 0
+        }
+      ]
+    },
+    {
+      "name": "非法日期 2026-02-30 不算已配置",
+      "from": [],
+      "input": {
+        "transitPassUntil": "2026-02-30",
+        "parkingPassUntil": "",
+        "now": "2026-09-15T10:00:00+02:00"
+      },
+      "expected": []
+    },
+    {
+      "name": "前后空白会被裁剪",
+      "from": [],
+      "input": {
+        "transitPassUntil": "  2026-09-20T23:59:59  ",
+        "parkingPassUntil": "",
+        "now": "2026-09-15T10:00:00+02:00"
+      },
+      "expected": [
+        {
+          "kind": "TRANSIT",
+          "state": "ACTIVE",
+          "until": "2026-09-20T23:59",
+          "daysUntil": 5
+        }
+      ]
+    },
+    {
+      "name": "24:00 是非法时间不算已配置",
+      "from": [],
+      "input": {
+        "transitPassUntil": "2026-09-20T24:00",
+        "parkingPassUntil": "",
+        "now": "2026-09-15T10:00:00+02:00"
+      },
+      "expected": []
+    },
+    {
+      "name": "截止分钟内的 :59:30 仍有效",
+      "from": [],
+      "input": {
+        "transitPassUntil": "2026-09-15T23:59",
+        "parkingPassUntil": "",
+        "now": "2026-09-15T23:59:30+02:00"
+      },
+      "expected": [
+        {
+          "kind": "TRANSIT",
+          "state": "EXPIRING",
+          "until": "2026-09-15T23:59",
+          "daysUntil": 0
+        }
+      ]
+    },
+    {
+      "name": "秒为 60 不算已配置",
+      "from": [],
+      "input": {
+        "transitPassUntil": "2026-09-24T23:59:60",
+        "parkingPassUntil": "",
+        "now": "2026-09-23T09:00:00+02:00"
+      },
+      "expected": []
+    },
+    {
+      "name": "带小数秒的旧值截掉小数秒",
+      "from": [],
+      "input": {
+        "transitPassUntil": "2026-09-20T23:59:59.999",
+        "parkingPassUntil": "",
+        "now": "2026-09-15T10:00:00+02:00"
+      },
+      "expected": [
+        {
+          "kind": "TRANSIT",
+          "state": "ACTIVE",
+          "until": "2026-09-20T23:59",
+          "daysUntil": 5
+        }
+      ]
+    }
+  ]
+}

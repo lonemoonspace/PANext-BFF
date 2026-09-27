@@ -1,0 +1,106 @@
+{
+  "subject": "StationMatcher.matches/normalize",
+  "kotlin": "app/src/main/java/com/personalassistant/app/data/train/StationMatcher.kt",
+  "cases": [
+    {
+      "name": "后缀 stasjon 与大小写差异视为同一站名（Nationaltheatret）",
+      "from": [
+        "StationMatcherTest.ignoresPresentationSuffixAndCase"
+      ],
+      "input": {
+        "fn": "matches",
+        "actual": "Nationaltheatret stasjon",
+        "expected": "nationaltheatret"
+      },
+      "expected": true
+    },
+    {
+      "name": "后缀 STASJON 大写与大小写差异视为同一站名（Asker）",
+      "from": [
+        "StationMatcherTest.ignoresPresentationSuffixAndCase"
+      ],
+      "input": {
+        "fn": "matches",
+        "actual": "Asker STASJON",
+        "expected": "Asker"
+      },
+      "expected": true
+    },
+    {
+      "name": "不做前缀子串匹配",
+      "from": [
+        "StationMatcherTest.doesNotUseSubstringMatching"
+      ],
+      "input": {
+        "fn": "matches",
+        "actual": "Nationaltheatret",
+        "expected": "National"
+      },
+      "expected": false
+    },
+    {
+      "name": "不做包含关系子串匹配（多一个词）",
+      "from": [
+        "StationMatcherTest.doesNotUseSubstringMatching"
+      ],
+      "input": {
+        "fn": "matches",
+        "actual": "Asker sentrum",
+        "expected": "Asker"
+      },
+      "expected": false
+    },
+    {
+      "name": "连字符规整为空格后仍匹配",
+      "from": [
+        "StationMatcherTest.normalizesPunctuationWithoutChangingWords"
+      ],
+      "input": {
+        "fn": "matches",
+        "actual": "Sandvika-stasjon",
+        "expected": "Sandvika"
+      },
+      "expected": true
+    },
+    {
+      "name": "规整标点不会让不同站名变成相同",
+      "from": [
+        "StationMatcherTest.normalizesPunctuationWithoutChangingWords"
+      ],
+      "input": {
+        "fn": "matches",
+        "actual": "Sandvika",
+        "expected": "Sandvika stasjon øst"
+      },
+      "expected": false
+    },
+    {
+      "name": "actual 为 null 时不匹配",
+      "from": [],
+      "input": {
+        "fn": "matches",
+        "actual": null,
+        "expected": "Asker"
+      },
+      "expected": false
+    },
+    {
+      "name": "normalize 去除 stasjon 后缀并折叠多余空白",
+      "from": [],
+      "input": {
+        "fn": "normalize",
+        "value": "Nationaltheatret  stasjon"
+      },
+      "expected": "nationaltheatret"
+    },
+    {
+      "name": "normalize 两个 stasjon 全部移除后结果为空串",
+      "from": [],
+      "input": {
+        "fn": "normalize",
+        "value": "Stasjon stasjon"
+      },
+      "expected": ""
+    }
+  ]
+}

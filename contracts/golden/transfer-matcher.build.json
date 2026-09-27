@@ -1,0 +1,1946 @@
+{
+  "subject": "TransferMatcher.build",
+  "kotlin": "app/src/main/java/com/personalassistant/app/data/train/TransferMatcher.kt",
+  "cases": [
+    {
+      "name": "配对最近一班 L1 与最早一班顺路 R14 并比较耗时",
+      "from": [
+        "TransferMatcherTest.pairsNextL1WithEarliestR14AndCompares"
+      ],
+      "input": {
+        "originCalls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T09:53:00+02:00",
+            "expectedDepartureTime": "2026-08-18T09:53:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Spikkestad stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T09:53:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T09:53:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:03:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:03:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:28:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:28:00+02:00"
+                }
+              ]
+            }
+          }
+        ],
+        "transferCalls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T10:39:00+02:00",
+            "expectedDepartureTime": "2026-08-18T10:39:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "R14"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:39:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:39:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Sandvika stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:44:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:44:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:50:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:50:00+02:00"
+                }
+              ]
+            }
+          }
+        ],
+        "originName": "Spikkestad",
+        "destName": "Nationaltheatret",
+        "now": "2026-08-18T09:40:00+02:00"
+      },
+      "expected": {
+        "transferStation": "Asker",
+        "options": [
+          {
+            "l1": {
+              "line": "L1",
+              "fromName": "Spikkestad",
+              "toName": "Asker",
+              "depTime": "2026-08-18T09:53:00+02:00",
+              "arrTime": "2026-08-18T10:03:00+02:00",
+              "delayMin": 0,
+              "cancelled": false,
+              "delayKnown": true
+            },
+            "r14": {
+              "line": "R14",
+              "fromName": "Asker",
+              "toName": "Nationaltheatret",
+              "depTime": "2026-08-18T10:39:00+02:00",
+              "arrTime": "2026-08-18T10:50:00+02:00",
+              "delayMin": 0,
+              "cancelled": false,
+              "delayKnown": true
+            },
+            "waitMin": 36,
+            "directArrTime": "2026-08-18T10:28:00+02:00",
+            "savedMin": -22
+          }
+        ],
+        "updatedAt": "2026-08-18T09:40:00+02:00"
+      }
+    },
+    {
+      "name": "只选取尚未发车的下一班 L1",
+      "from": [
+        "TransferMatcherTest.selectsOnlyNextFutureL1"
+      ],
+      "input": {
+        "originCalls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T09:20:00+02:00",
+            "expectedDepartureTime": "2026-08-18T09:20:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Spikkestad stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T09:20:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T09:20:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T09:30:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T09:30:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T09:55:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T09:55:00+02:00"
+                }
+              ]
+            }
+          },
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T09:53:00+02:00",
+            "expectedDepartureTime": "2026-08-18T09:53:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Spikkestad stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T09:53:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T09:53:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:03:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:03:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:28:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:28:00+02:00"
+                }
+              ]
+            }
+          },
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T10:24:00+02:00",
+            "expectedDepartureTime": "2026-08-18T10:24:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Spikkestad stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:24:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:24:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:33:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:33:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:58:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:58:00+02:00"
+                }
+              ]
+            }
+          }
+        ],
+        "transferCalls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T10:39:00+02:00",
+            "expectedDepartureTime": "2026-08-18T10:39:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "R14"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:39:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:39:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Sandvika stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:44:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:44:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:50:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:50:00+02:00"
+                }
+              ]
+            }
+          }
+        ],
+        "originName": "Spikkestad",
+        "destName": "Nationaltheatret",
+        "now": "2026-08-18T09:40:00+02:00"
+      },
+      "expected": {
+        "transferStation": "Asker",
+        "options": [
+          {
+            "l1": {
+              "line": "L1",
+              "fromName": "Spikkestad",
+              "toName": "Asker",
+              "depTime": "2026-08-18T09:53:00+02:00",
+              "arrTime": "2026-08-18T10:03:00+02:00",
+              "delayMin": 0,
+              "cancelled": false,
+              "delayKnown": true
+            },
+            "r14": {
+              "line": "R14",
+              "fromName": "Asker",
+              "toName": "Nationaltheatret",
+              "depTime": "2026-08-18T10:39:00+02:00",
+              "arrTime": "2026-08-18T10:50:00+02:00",
+              "delayMin": 0,
+              "cancelled": false,
+              "delayKnown": true
+            },
+            "waitMin": 36,
+            "directArrTime": "2026-08-18T10:28:00+02:00",
+            "savedMin": -22
+          }
+        ],
+        "updatedAt": "2026-08-18T09:40:00+02:00"
+      }
+    },
+    {
+      "name": "紧凑换乘不做裕量判断，同刻发车视为赶不上",
+      "from": [
+        "TransferMatcherTest.matchesTightTransferWithoutMarginAndSkipsSameMinute"
+      ],
+      "input": {
+        "originCalls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T09:53:00+02:00",
+            "expectedDepartureTime": "2026-08-18T09:53:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Spikkestad stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T09:53:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T09:53:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:03:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:03:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:28:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:28:00+02:00"
+                }
+              ]
+            }
+          }
+        ],
+        "transferCalls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T10:03:00+02:00",
+            "expectedDepartureTime": "2026-08-18T10:03:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "R14"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:03:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:03:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Sandvika stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:08:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:08:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:14:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:14:00+02:00"
+                }
+              ]
+            }
+          },
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T10:05:00+02:00",
+            "expectedDepartureTime": "2026-08-18T10:05:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "R14"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:05:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:05:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Sandvika stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:10:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:10:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:16:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:16:00+02:00"
+                }
+              ]
+            }
+          }
+        ],
+        "originName": "Spikkestad",
+        "destName": "Nationaltheatret",
+        "now": "2026-08-18T09:40:00+02:00"
+      },
+      "expected": {
+        "transferStation": "Asker",
+        "options": [
+          {
+            "l1": {
+              "line": "L1",
+              "fromName": "Spikkestad",
+              "toName": "Asker",
+              "depTime": "2026-08-18T09:53:00+02:00",
+              "arrTime": "2026-08-18T10:03:00+02:00",
+              "delayMin": 0,
+              "cancelled": false,
+              "delayKnown": true
+            },
+            "r14": {
+              "line": "R14",
+              "fromName": "Asker",
+              "toName": "Nationaltheatret",
+              "depTime": "2026-08-18T10:05:00+02:00",
+              "arrTime": "2026-08-18T10:16:00+02:00",
+              "delayMin": 0,
+              "cancelled": false,
+              "delayKnown": true
+            },
+            "waitMin": 2,
+            "directArrTime": "2026-08-18T10:28:00+02:00",
+            "savedMin": 12
+          }
+        ],
+        "updatedAt": "2026-08-18T09:40:00+02:00"
+      }
+    },
+    {
+      "name": "反方向 L1 与 R14 均被排除",
+      "from": [
+        "TransferMatcherTest.excludesWrongDirectionTrains"
+      ],
+      "input": {
+        "originCalls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T09:46:00+02:00",
+            "expectedDepartureTime": "2026-08-18T09:46:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T09:20:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T09:20:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Spikkestad stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T09:54:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T09:54:00+02:00"
+                }
+              ]
+            }
+          }
+        ],
+        "transferCalls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T09:40:00+02:00",
+            "expectedDepartureTime": "2026-08-18T09:40:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "R14"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T09:40:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T09:40:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Drammen stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T09:55:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T09:55:00+02:00"
+                }
+              ]
+            }
+          }
+        ],
+        "originName": "Spikkestad",
+        "destName": "Nationaltheatret",
+        "now": "2026-08-18T09:40:00+02:00"
+      },
+      "expected": {
+        "transferStation": "Asker",
+        "options": [],
+        "updatedAt": "2026-08-18T09:40:00+02:00"
+      }
+    },
+    {
+      "name": "延误与取消状态从原始班次带入两段行程",
+      "from": [
+        "TransferMatcherTest.propagatesRealtimeDelayAndCancellation"
+      ],
+      "input": {
+        "originCalls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T09:53:00+02:00",
+            "expectedDepartureTime": "2026-08-18T09:58:00+02:00",
+            "cancellation": true,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Spikkestad stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T09:53:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T09:53:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:03:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:03:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:28:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:28:00+02:00"
+                }
+              ]
+            }
+          }
+        ],
+        "transferCalls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T10:39:00+02:00",
+            "expectedDepartureTime": "2026-08-18T10:44:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "R14"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:39:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:39:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Sandvika stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:44:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:44:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:50:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:50:00+02:00"
+                }
+              ]
+            }
+          }
+        ],
+        "originName": "Spikkestad",
+        "destName": "Nationaltheatret",
+        "now": "2026-08-18T09:40:00+02:00"
+      },
+      "expected": {
+        "transferStation": "Asker",
+        "options": [
+          {
+            "l1": {
+              "line": "L1",
+              "fromName": "Spikkestad",
+              "toName": "Asker",
+              "depTime": "2026-08-18T09:58:00+02:00",
+              "arrTime": "2026-08-18T10:03:00+02:00",
+              "delayMin": 5,
+              "cancelled": true,
+              "delayKnown": true
+            },
+            "r14": {
+              "line": "R14",
+              "fromName": "Asker",
+              "toName": "Nationaltheatret",
+              "depTime": "2026-08-18T10:44:00+02:00",
+              "arrTime": "2026-08-18T10:50:00+02:00",
+              "delayMin": 5,
+              "cancelled": false,
+              "delayKnown": true
+            },
+            "waitMin": 41,
+            "directArrTime": "2026-08-18T10:28:00+02:00",
+            "savedMin": -22
+          }
+        ],
+        "updatedAt": "2026-08-18T09:40:00+02:00"
+      }
+    },
+    {
+      "name": "R14 发车早于 L1 到达换乘站时被排除",
+      "from": [
+        "TransferMatcherTest.rejectsArrivalBeforeDeparture"
+      ],
+      "input": {
+        "originCalls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T09:53:00+02:00",
+            "expectedDepartureTime": "2026-08-18T09:53:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Spikkestad stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T09:53:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T09:53:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:03:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:03:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:28:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:28:00+02:00"
+                }
+              ]
+            }
+          }
+        ],
+        "transferCalls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T09:59:00+02:00",
+            "expectedDepartureTime": "2026-08-18T09:59:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "R14"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T09:59:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T09:59:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Sandvika stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:04:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:04:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T09:50:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T09:50:00+02:00"
+                }
+              ]
+            }
+          }
+        ],
+        "originName": "Spikkestad",
+        "destName": "Nationaltheatret",
+        "now": "2026-08-18T09:40:00+02:00"
+      },
+      "expected": {
+        "transferStation": "Asker",
+        "options": [],
+        "updatedAt": "2026-08-18T09:40:00+02:00"
+      }
+    },
+    {
+      "name": "L1 到达换乘站早于其自身出发时应被排除",
+      "from": [
+        "TransferMatcherTest.rejectsIntermediateArrivalBeforeDeparture"
+      ],
+      "input": {
+        "originCalls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T09:53:00+02:00",
+            "expectedDepartureTime": "2026-08-18T09:53:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Spikkestad stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T09:53:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T09:53:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T09:40:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T09:40:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:28:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:28:00+02:00"
+                }
+              ]
+            }
+          }
+        ],
+        "transferCalls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T10:39:00+02:00",
+            "expectedDepartureTime": "2026-08-18T10:39:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "R14"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:39:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:39:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Sandvika stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:44:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:44:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:50:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:50:00+02:00"
+                }
+              ]
+            }
+          }
+        ],
+        "originName": "Spikkestad",
+        "destName": "Nationaltheatret",
+        "now": "2026-08-18T09:40:00+02:00"
+      },
+      "expected": {
+        "transferStation": "Asker",
+        "options": [],
+        "updatedAt": "2026-08-18T09:40:00+02:00"
+      }
+    },
+    {
+      "name": "跳过无效 L1，选取下一班有效 L1",
+      "from": [
+        "TransferMatcherTest.skipsInvalidL1AndUsesNextValidTrain"
+      ],
+      "input": {
+        "originCalls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T09:53:00+02:00",
+            "expectedDepartureTime": "2026-08-18T09:53:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Spikkestad stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T09:53:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T09:53:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T09:40:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T09:40:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:28:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:28:00+02:00"
+                }
+              ]
+            }
+          },
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T10:24:00+02:00",
+            "expectedDepartureTime": "2026-08-18T10:24:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Spikkestad stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:24:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:24:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:33:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:33:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:58:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:58:00+02:00"
+                }
+              ]
+            }
+          }
+        ],
+        "transferCalls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T10:39:00+02:00",
+            "expectedDepartureTime": "2026-08-18T10:39:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "R14"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:39:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:39:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Sandvika stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:44:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:44:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:50:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:50:00+02:00"
+                }
+              ]
+            }
+          }
+        ],
+        "originName": "Spikkestad",
+        "destName": "Nationaltheatret",
+        "now": "2026-08-18T09:40:00+02:00"
+      },
+      "expected": {
+        "transferStation": "Asker",
+        "options": [
+          {
+            "l1": {
+              "line": "L1",
+              "fromName": "Spikkestad",
+              "toName": "Asker",
+              "depTime": "2026-08-18T10:24:00+02:00",
+              "arrTime": "2026-08-18T10:33:00+02:00",
+              "delayMin": 0,
+              "cancelled": false,
+              "delayKnown": true
+            },
+            "r14": {
+              "line": "R14",
+              "fromName": "Asker",
+              "toName": "Nationaltheatret",
+              "depTime": "2026-08-18T10:39:00+02:00",
+              "arrTime": "2026-08-18T10:50:00+02:00",
+              "delayMin": 0,
+              "cancelled": false,
+              "delayKnown": true
+            },
+            "waitMin": 6,
+            "directArrTime": "2026-08-18T10:58:00+02:00",
+            "savedMin": 8
+          }
+        ],
+        "updatedAt": "2026-08-18T09:40:00+02:00"
+      }
+    },
+    {
+      "name": "下一班 L1 没有可换乘的 R14 时返回空列表",
+      "from": [
+        "TransferMatcherTest.returnsEmptyWhenNextL1HasNoR14"
+      ],
+      "input": {
+        "originCalls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T09:53:00+02:00",
+            "expectedDepartureTime": "2026-08-18T09:53:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Spikkestad stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T09:53:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T09:53:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:03:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:03:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:28:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:28:00+02:00"
+                }
+              ]
+            }
+          }
+        ],
+        "transferCalls": [],
+        "originName": "Spikkestad",
+        "destName": "Nationaltheatret",
+        "now": "2026-08-18T09:40:00+02:00"
+      },
+      "expected": {
+        "transferStation": "Asker",
+        "options": [],
+        "updatedAt": "2026-08-18T09:40:00+02:00"
+      }
+    },
+    {
+      "name": "仅有计划时刻的班次标记为实时未知",
+      "from": [
+        "TransferMatcherTest.marksScheduledOnlyTransferAsRealtimeUnknown"
+      ],
+      "input": {
+        "originCalls": [
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-08-18T09:53:00+02:00",
+            "expectedDepartureTime": "2026-08-18T09:53:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Spikkestad stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T09:53:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T09:53:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:03:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:03:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:28:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:28:00+02:00"
+                }
+              ]
+            }
+          }
+        ],
+        "transferCalls": [
+          {
+            "realtime": false,
+            "aimedDepartureTime": "2026-08-18T10:39:00+02:00",
+            "expectedDepartureTime": "2026-08-18T10:39:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "R14"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:39:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:39:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Sandvika stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:44:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:44:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:50:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:50:00+02:00"
+                }
+              ]
+            }
+          }
+        ],
+        "originName": "Spikkestad",
+        "destName": "Nationaltheatret",
+        "now": "2026-08-18T09:40:00+02:00"
+      },
+      "expected": {
+        "transferStation": "Asker",
+        "options": [
+          {
+            "l1": {
+              "line": "L1",
+              "fromName": "Spikkestad",
+              "toName": "Asker",
+              "depTime": "2026-08-18T09:53:00+02:00",
+              "arrTime": "2026-08-18T10:03:00+02:00",
+              "delayMin": 0,
+              "cancelled": false,
+              "delayKnown": false
+            },
+            "r14": {
+              "line": "R14",
+              "fromName": "Asker",
+              "toName": "Nationaltheatret",
+              "depTime": "2026-08-18T10:39:00+02:00",
+              "arrTime": "2026-08-18T10:50:00+02:00",
+              "delayMin": 0,
+              "cancelled": false,
+              "delayKnown": false
+            },
+            "waitMin": 36,
+            "directArrTime": "2026-08-18T10:28:00+02:00",
+            "savedMin": -22
+          }
+        ],
+        "updatedAt": "2026-08-18T09:40:00+02:00"
+      }
+    },
+    {
+      "name": "L1 不经过目的站时 directArrTime 为空且 savedMin 为 null",
+      "from": [],
+      "input": {
+        "originCalls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T09:53:00+02:00",
+            "expectedDepartureTime": "2026-08-18T09:53:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Spikkestad stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T09:53:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T09:53:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:03:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:03:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": null,
+                  "expectedArrivalTime": null
+                }
+              ]
+            }
+          }
+        ],
+        "transferCalls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T10:39:00+02:00",
+            "expectedDepartureTime": "2026-08-18T10:39:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "R14"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:39:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:39:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Sandvika stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:44:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:44:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:50:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:50:00+02:00"
+                }
+              ]
+            }
+          }
+        ],
+        "originName": "Spikkestad",
+        "destName": "Nationaltheatret",
+        "now": "2026-08-18T09:40:00+02:00"
+      },
+      "expected": {
+        "transferStation": "Asker",
+        "options": [
+          {
+            "l1": {
+              "line": "L1",
+              "fromName": "Spikkestad",
+              "toName": "Asker",
+              "depTime": "2026-08-18T09:53:00+02:00",
+              "arrTime": "2026-08-18T10:03:00+02:00",
+              "delayMin": 0,
+              "cancelled": false,
+              "delayKnown": true
+            },
+            "r14": {
+              "line": "R14",
+              "fromName": "Asker",
+              "toName": "Nationaltheatret",
+              "depTime": "2026-08-18T10:39:00+02:00",
+              "arrTime": "2026-08-18T10:50:00+02:00",
+              "delayMin": 0,
+              "cancelled": false,
+              "delayKnown": true
+            },
+            "waitMin": 36,
+            "directArrTime": "",
+            "savedMin": null
+          }
+        ],
+        "updatedAt": "2026-08-18T09:40:00+02:00"
+      }
+    },
+    {
+      "name": "反方向 L1 单独被排除（换乘班次方向正确）",
+      "from": [],
+      "input": {
+        "originCalls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T09:46:00+02:00",
+            "expectedDepartureTime": "2026-08-18T09:46:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T09:20:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T09:20:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Spikkestad stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T09:54:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T09:54:00+02:00"
+                }
+              ]
+            }
+          }
+        ],
+        "transferCalls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T10:39:00+02:00",
+            "expectedDepartureTime": "2026-08-18T10:39:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "R14"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:39:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:39:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Sandvika stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:44:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:44:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:50:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:50:00+02:00"
+                }
+              ]
+            }
+          }
+        ],
+        "originName": "Spikkestad",
+        "destName": "Nationaltheatret",
+        "now": "2026-08-18T09:40:00+02:00"
+      },
+      "expected": {
+        "transferStation": "Asker",
+        "options": [],
+        "updatedAt": "2026-08-18T09:40:00+02:00"
+      }
+    },
+    {
+      "name": "transferCalls 列表乱序时仍选出发车最早的合规 R14",
+      "from": [],
+      "input": {
+        "originCalls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T09:50:00+02:00",
+            "expectedDepartureTime": "2026-08-18T09:50:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Spikkestad stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T09:50:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T09:50:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:03:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:03:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:30:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:30:00+02:00"
+                }
+              ]
+            }
+          }
+        ],
+        "transferCalls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T10:20:00+02:00",
+            "expectedDepartureTime": "2026-08-18T10:20:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "R14"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:20:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:20:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Sandvika stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:25:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:25:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:31:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:31:00+02:00"
+                }
+              ]
+            }
+          },
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T10:08:00+02:00",
+            "expectedDepartureTime": "2026-08-18T10:08:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "R14"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:08:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:08:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Sandvika stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:13:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:13:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:19:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:19:00+02:00"
+                }
+              ]
+            }
+          }
+        ],
+        "originName": "Spikkestad",
+        "destName": "Nationaltheatret",
+        "now": "2026-08-18T09:00:00+02:00"
+      },
+      "expected": {
+        "transferStation": "Asker",
+        "options": [
+          {
+            "l1": {
+              "line": "L1",
+              "fromName": "Spikkestad",
+              "toName": "Asker",
+              "depTime": "2026-08-18T09:50:00+02:00",
+              "arrTime": "2026-08-18T10:03:00+02:00",
+              "delayMin": 0,
+              "cancelled": false,
+              "delayKnown": true
+            },
+            "r14": {
+              "line": "R14",
+              "fromName": "Asker",
+              "toName": "Nationaltheatret",
+              "depTime": "2026-08-18T10:08:00+02:00",
+              "arrTime": "2026-08-18T10:19:00+02:00",
+              "delayMin": 0,
+              "cancelled": false,
+              "delayKnown": true
+            },
+            "waitMin": 5,
+            "directArrTime": "2026-08-18T10:30:00+02:00",
+            "savedMin": 11
+          }
+        ],
+        "updatedAt": "2026-08-18T09:00:00+02:00"
+      }
+    },
+    {
+      "name": "换乘裕量与到达时刻按 expectedArrivalTime 计算，不是 aimedArrivalTime",
+      "from": [],
+      "input": {
+        "originCalls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T09:50:00+02:00",
+            "expectedDepartureTime": "2026-08-18T09:50:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Spikkestad stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T09:50:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T09:50:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:03:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:06:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:28:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:31:00+02:00"
+                }
+              ]
+            }
+          }
+        ],
+        "transferCalls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T10:05:00+02:00",
+            "expectedDepartureTime": "2026-08-18T10:05:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "R14"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:05:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:05:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Sandvika stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:15:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:15:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:20:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:20:00+02:00"
+                }
+              ]
+            }
+          },
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T10:10:00+02:00",
+            "expectedDepartureTime": "2026-08-18T10:10:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "R14"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:10:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:10:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Sandvika stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:21:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:21:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:26:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:26:00+02:00"
+                }
+              ]
+            }
+          }
+        ],
+        "originName": "Spikkestad",
+        "destName": "Nationaltheatret",
+        "now": "2026-08-18T09:00:00+02:00"
+      },
+      "expected": {
+        "transferStation": "Asker",
+        "options": [
+          {
+            "l1": {
+              "line": "L1",
+              "fromName": "Spikkestad",
+              "toName": "Asker",
+              "depTime": "2026-08-18T09:50:00+02:00",
+              "arrTime": "2026-08-18T10:06:00+02:00",
+              "delayMin": 0,
+              "cancelled": false,
+              "delayKnown": true
+            },
+            "r14": {
+              "line": "R14",
+              "fromName": "Asker",
+              "toName": "Nationaltheatret",
+              "depTime": "2026-08-18T10:10:00+02:00",
+              "arrTime": "2026-08-18T10:26:00+02:00",
+              "delayMin": 0,
+              "cancelled": false,
+              "delayKnown": true
+            },
+            "waitMin": 4,
+            "directArrTime": "2026-08-18T10:31:00+02:00",
+            "savedMin": 5
+          }
+        ],
+        "updatedAt": "2026-08-18T09:00:00+02:00"
+      }
+    },
+    {
+      "name": "带秒的实时时刻使 waitMin/savedMin 非整分并向零截断（含负数）",
+      "from": [],
+      "input": {
+        "originCalls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T09:50:00+02:00",
+            "expectedDepartureTime": "2026-08-18T09:50:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Spikkestad stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T09:50:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T09:50:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:03:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:03:40+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:28:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:28:30+02:00"
+                }
+              ]
+            }
+          }
+        ],
+        "transferCalls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T10:10:00+02:00",
+            "expectedDepartureTime": "2026-08-18T10:10:10+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "R14"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:10:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:10:10+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Sandvika stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:30:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:30:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:50:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:50:50+02:00"
+                }
+              ]
+            }
+          }
+        ],
+        "originName": "Spikkestad",
+        "destName": "Nationaltheatret",
+        "now": "2026-08-18T09:00:00+02:00"
+      },
+      "expected": {
+        "transferStation": "Asker",
+        "options": [
+          {
+            "l1": {
+              "line": "L1",
+              "fromName": "Spikkestad",
+              "toName": "Asker",
+              "depTime": "2026-08-18T09:50:00+02:00",
+              "arrTime": "2026-08-18T10:03:40+02:00",
+              "delayMin": 0,
+              "cancelled": false,
+              "delayKnown": true
+            },
+            "r14": {
+              "line": "R14",
+              "fromName": "Asker",
+              "toName": "Nationaltheatret",
+              "depTime": "2026-08-18T10:10:10+02:00",
+              "arrTime": "2026-08-18T10:50:50+02:00",
+              "delayMin": 0,
+              "cancelled": false,
+              "delayKnown": true
+            },
+            "waitMin": 6,
+            "directArrTime": "2026-08-18T10:28:30+02:00",
+            "savedMin": -22
+          }
+        ],
+        "updatedAt": "2026-08-18T09:00:00+02:00"
+      }
+    },
+    {
+      "name": "L1 发车时刻恰好等于 now 时被排除，选取下一班",
+      "from": [],
+      "input": {
+        "originCalls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T09:53:00+02:00",
+            "expectedDepartureTime": "2026-08-18T09:53:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Spikkestad stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T09:53:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T09:53:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:03:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:03:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:28:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:28:00+02:00"
+                }
+              ]
+            }
+          },
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T10:24:00+02:00",
+            "expectedDepartureTime": "2026-08-18T10:24:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "L1"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Spikkestad stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:24:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:24:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:33:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:33:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:58:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:58:00+02:00"
+                }
+              ]
+            }
+          }
+        ],
+        "transferCalls": [
+          {
+            "realtime": true,
+            "aimedDepartureTime": "2026-08-18T10:39:00+02:00",
+            "expectedDepartureTime": "2026-08-18T10:39:00+02:00",
+            "cancellation": false,
+            "serviceJourney": {
+              "journeyPattern": {
+                "line": {
+                  "publicCode": "R14"
+                }
+              },
+              "estimatedCalls": [
+                {
+                  "quay": {
+                    "name": "Asker stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:39:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:39:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Sandvika stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:44:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:44:00+02:00"
+                },
+                {
+                  "quay": {
+                    "name": "Nationaltheatret stasjon"
+                  },
+                  "aimedArrivalTime": "2026-08-18T10:50:00+02:00",
+                  "expectedArrivalTime": "2026-08-18T10:50:00+02:00"
+                }
+              ]
+            }
+          }
+        ],
+        "originName": "Spikkestad",
+        "destName": "Nationaltheatret",
+        "now": "2026-08-18T09:53:00+02:00"
+      },
+      "expected": {
+        "transferStation": "Asker",
+        "options": [
+          {
+            "l1": {
+              "line": "L1",
+              "fromName": "Spikkestad",
+              "toName": "Asker",
+              "depTime": "2026-08-18T10:24:00+02:00",
+              "arrTime": "2026-08-18T10:33:00+02:00",
+              "delayMin": 0,
+              "cancelled": false,
+              "delayKnown": true
+            },
+            "r14": {
+              "line": "R14",
+              "fromName": "Asker",
+              "toName": "Nationaltheatret",
+              "depTime": "2026-08-18T10:39:00+02:00",
+              "arrTime": "2026-08-18T10:50:00+02:00",
+              "delayMin": 0,
+              "cancelled": false,
+              "delayKnown": true
+            },
+            "waitMin": 6,
+            "directArrTime": "2026-08-18T10:58:00+02:00",
+            "savedMin": 8
+          }
+        ],
+        "updatedAt": "2026-08-18T09:53:00+02:00"
+      }
+    }
+  ]
+}

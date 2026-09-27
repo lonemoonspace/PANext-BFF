@@ -1,0 +1,86 @@
+{
+  "subject": "TimeSegments.resolve",
+  "kotlin": "app/src/main/java/com/personalassistant/app/domain/TimeSegments.kt",
+  "cases": [
+    {
+      "name": "04:59 判定为 NIGHT",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T04:59:00+02:00"
+      },
+      "expected": "NIGHT"
+    },
+    {
+      "name": "05:00 判定为 MORNING",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T05:00:00+02:00"
+      },
+      "expected": "MORNING"
+    },
+    {
+      "name": "09:59 判定为 MORNING",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T09:59:00+02:00"
+      },
+      "expected": "MORNING"
+    },
+    {
+      "name": "10:00 判定为 DAY",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T10:00:00+02:00"
+      },
+      "expected": "DAY"
+    },
+    {
+      "name": "14:59 判定为 DAY",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T14:59:00+02:00"
+      },
+      "expected": "DAY"
+    },
+    {
+      "name": "15:00 判定为 EVENING",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T15:00:00+02:00"
+      },
+      "expected": "EVENING"
+    },
+    {
+      "name": "20:59 判定为 EVENING",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T20:59:00+02:00"
+      },
+      "expected": "EVENING"
+    },
+    {
+      "name": "21:00 判定为 NIGHT",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T21:00:00+02:00"
+      },
+      "expected": "NIGHT"
+    },
+    {
+      "name": "00:00 判定为 NIGHT",
+      "from": [],
+      "input": {
+        "now": "2026-09-23T00:00:00+02:00"
+      },
+      "expected": "NIGHT"
+    },
+    {
+      "name": "UTC 输入跨 Oslo 日期时按本地时刻判定",
+      "from": [],
+      "input": {
+        "now": "2026-09-22T22:30:00Z"
+      },
+      "expected": "NIGHT"
+    }
+  ]
+}

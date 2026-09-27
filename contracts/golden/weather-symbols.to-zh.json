@@ -1,0 +1,486 @@
+{
+  "subject": "WeatherSymbols.toZh",
+  "kotlin": "app/src/main/java/com/personalassistant/app/domain/WeatherSymbols.kt",
+  "cases": [
+    {
+      "name": "clearsky_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "clearsky_day"
+      },
+      "expected": "☀️ 晴"
+    },
+    {
+      "name": "fair_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "fair_day"
+      },
+      "expected": "🌤 少云"
+    },
+    {
+      "name": "partlycloudy_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "partlycloudy_day"
+      },
+      "expected": "⛅ 多云"
+    },
+    {
+      "name": "cloudy_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "cloudy_day"
+      },
+      "expected": "☁️ 阴"
+    },
+    {
+      "name": "lightrain_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "lightrain_day"
+      },
+      "expected": "🌦 小雨"
+    },
+    {
+      "name": "rain_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "rain_day"
+      },
+      "expected": "🌧 雨"
+    },
+    {
+      "name": "heavyrain_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "heavyrain_day"
+      },
+      "expected": "🌧 大雨"
+    },
+    {
+      "name": "lightrainshowers_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "lightrainshowers_day"
+      },
+      "expected": "🌦 小阵雨"
+    },
+    {
+      "name": "rainshowers_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "rainshowers_day"
+      },
+      "expected": "🌦 阵雨"
+    },
+    {
+      "name": "heavyrainshowers_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "heavyrainshowers_day"
+      },
+      "expected": "🌧 大阵雨"
+    },
+    {
+      "name": "lightrainshowersandthunder_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "lightrainshowersandthunder_day"
+      },
+      "expected": "⛈ 小阵雨雷暴"
+    },
+    {
+      "name": "rainshowersandthunder_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "rainshowersandthunder_day"
+      },
+      "expected": "⛈ 阵雨雷暴"
+    },
+    {
+      "name": "heavyrainshowersandthunder_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "heavyrainshowersandthunder_day"
+      },
+      "expected": "⛈ 大阵雨雷暴"
+    },
+    {
+      "name": "lightsleetshowers_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "lightsleetshowers_day"
+      },
+      "expected": "🌨 小冰雨阵雨"
+    },
+    {
+      "name": "sleetshowers_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "sleetshowers_day"
+      },
+      "expected": "🌨 冰雨阵雨"
+    },
+    {
+      "name": "heavysleetshowers_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "heavysleetshowers_day"
+      },
+      "expected": "🌨 大冰雨阵雨"
+    },
+    {
+      "name": "lightssleetshowersandthunder_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "lightssleetshowersandthunder_day"
+      },
+      "expected": "⛈ 小冰雨阵雨雷暴"
+    },
+    {
+      "name": "sleetshowersandthunder_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "sleetshowersandthunder_day"
+      },
+      "expected": "⛈ 冰雨阵雨雷暴"
+    },
+    {
+      "name": "heavysleetshowersandthunder_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "heavysleetshowersandthunder_day"
+      },
+      "expected": "⛈ 大冰雨阵雨雷暴"
+    },
+    {
+      "name": "lightsleet_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "lightsleet_day"
+      },
+      "expected": "🌨 小冰雨"
+    },
+    {
+      "name": "sleet_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "sleet_day"
+      },
+      "expected": "🌨 雨夹雪"
+    },
+    {
+      "name": "heavysleet_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "heavysleet_day"
+      },
+      "expected": "🌨 大冰雨"
+    },
+    {
+      "name": "lightrainandthunder_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "lightrainandthunder_day"
+      },
+      "expected": "⛈ 小雨雷暴"
+    },
+    {
+      "name": "rainandthunder_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "rainandthunder_day"
+      },
+      "expected": "⛈ 雷阵雨"
+    },
+    {
+      "name": "heavyrainandthunder_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "heavyrainandthunder_day"
+      },
+      "expected": "⛈ 大雨雷暴"
+    },
+    {
+      "name": "lightsleetandthunder_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "lightsleetandthunder_day"
+      },
+      "expected": "⛈ 小冰雨雷暴"
+    },
+    {
+      "name": "sleetandthunder_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "sleetandthunder_day"
+      },
+      "expected": "⛈ 冰雨雷暴"
+    },
+    {
+      "name": "heavysleetandthunder_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "heavysleetandthunder_day"
+      },
+      "expected": "⛈ 大冰雨雷暴"
+    },
+    {
+      "name": "lightsnowshowers_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "lightsnowshowers_day"
+      },
+      "expected": "❄️ 小雪阵雨"
+    },
+    {
+      "name": "snowshowers_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "snowshowers_day"
+      },
+      "expected": "❄️ 阵雪"
+    },
+    {
+      "name": "heavysnowshowers_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "heavysnowshowers_day"
+      },
+      "expected": "❄️ 大雪阵雨"
+    },
+    {
+      "name": "lightssnowshowersandthunder_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "lightssnowshowersandthunder_day"
+      },
+      "expected": "⛈ 小雪阵雨雷暴"
+    },
+    {
+      "name": "snowshowersandthunder_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "snowshowersandthunder_day"
+      },
+      "expected": "⛈ 雪阵雨雷暴"
+    },
+    {
+      "name": "heavysnowshowersandthunder_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "heavysnowshowersandthunder_day"
+      },
+      "expected": "⛈ 大雪阵雨雷暴"
+    },
+    {
+      "name": "lightsnow_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "lightsnow_day"
+      },
+      "expected": "❄️ 小雪"
+    },
+    {
+      "name": "snow_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "snow_day"
+      },
+      "expected": "❄️ 雪"
+    },
+    {
+      "name": "heavysnow_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "heavysnow_day"
+      },
+      "expected": "❄️ 大雪"
+    },
+    {
+      "name": "lightsnowandthunder_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "lightsnowandthunder_day"
+      },
+      "expected": "⛈ 小雪雷暴"
+    },
+    {
+      "name": "snowandthunder_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "snowandthunder_day"
+      },
+      "expected": "⛈ 雪雷暴"
+    },
+    {
+      "name": "heavysnowandthunder_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "heavysnowandthunder_day"
+      },
+      "expected": "⛈ 大雪雷暴"
+    },
+    {
+      "name": "fog_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "fog_day"
+      },
+      "expected": "🌫 雾"
+    },
+    {
+      "name": "wind_day",
+      "from": [
+        "WeatherSymbolsTest.supportsAllMetBaseSymbolCodes"
+      ],
+      "input": {
+        "code": "wind_day"
+      },
+      "expected": "💨 大风"
+    },
+    {
+      "name": "heavyrainshowersandthunder_night 拼写正确且含雷字",
+      "from": [
+        "WeatherSymbolsTest.mapsHeavyRainShowersAndThunderWithCorrectSpelling"
+      ],
+      "input": {
+        "code": "heavyrainshowersandthunder_night"
+      },
+      "expected": "⛈ 大阵雨雷暴"
+    },
+    {
+      "name": "未知代码（拼写错误）回退为温度计图标加原始 key",
+      "from": [
+        "WeatherSymbolsTest.mapsHeavyRainShowersAndThunderWithCorrectSpelling"
+      ],
+      "input": {
+        "code": "heavyrinshowersandthunder"
+      },
+      "expected": "🌡 heavyrinshowersandthunder"
+    },
+    {
+      "name": "未知代码带 _night 后缀，回退为温度计图标加去掉后缀的 key",
+      "from": [],
+      "input": {
+        "code": "foo_night"
+      },
+      "expected": "🌡 foo"
+    },
+    {
+      "name": "constructor 不应命中 Object.prototype 的 constructor",
+      "from": [],
+      "input": {
+        "code": "constructor"
+      },
+      "expected": "🌡 constructor"
+    },
+    {
+      "name": "toString 不应命中 Object.prototype 的 toString",
+      "from": [],
+      "input": {
+        "code": "toString"
+      },
+      "expected": "🌡 toString"
+    },
+    {
+      "name": "hasOwnProperty 不应命中 Object.prototype 的 hasOwnProperty",
+      "from": [],
+      "input": {
+        "code": "hasOwnProperty"
+      },
+      "expected": "🌡 hasOwnProperty"
+    },
+    {
+      "name": "valueOf 不应命中 Object.prototype 的 valueOf",
+      "from": [],
+      "input": {
+        "code": "valueOf"
+      },
+      "expected": "🌡 valueOf"
+    }
+  ]
+}

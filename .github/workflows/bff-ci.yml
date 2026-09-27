@@ -1,0 +1,61 @@
+# BFF（bff/）的 CI：push / PR 改动了 bff/** 或 contracts/** 时运行。
+
+name: BFF CI
+
+on:
+  push:
+    branches: ['**']
+    paths:
+      - 'bff/**'
+      - 'contracts/**'
+      - '.github/workflows/bff-ci.yml'
+  pull_request:
+    paths:
+      - 'bff/**'
+      - 'contracts/**'
+      - '.github/workflows/bff-ci.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: bff-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: typecheck + test + deploy:dry
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: '11'
+
+      - name: Set up Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: pnpm
+          cache-dependency-path: bff/pnpm-lock.yaml
+
+      - name: Install dependencies
+        working-directory: bff
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        working-directory: bff
+        run: pnpm typecheck
+
+      - name: Test
+        working-directory: bff
+        run: pnpm test
+
+      - name: Deploy dry-run
+        working-directory: bff
+        run: pnpm deploy:dry
+
