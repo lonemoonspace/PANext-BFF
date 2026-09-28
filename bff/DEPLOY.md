@@ -32,6 +32,25 @@ pnpm -C bff exec wrangler login
 
 ## 1. 部署 Worker
 
+### 1.0 一键部署（可选，更快）
+
+公开仓库 README 里有一个按钮：
+
+[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/lonemoonspace/PANext-BFF/tree/main/bff)
+
+点它，按提示登录 Cloudflare、授权 GitHub 后，它会：
+
+- 把 `bff/` 子目录部署为一个新 Worker
+- 按 `bff/wrangler.jsonc` 自动创建同名 D1 数据库并回填 `database_id`
+- 跑一次 `pnpm run deploy`（已改成「先建表 / 迁移，再部署」，见下面 1.3）
+
+**按钮做不到的事，仍要手动补：**
+
+- 两个机密（`MASTER_KEY`、`CLAIM_CODE`）：按钮不会提示填写机密，跳到下面 1.2 用 `wrangler secret put` 补上，然后在 Cloudflare 控制台该 Worker 的「部署」页重新触发一次部署（或本机跑 `pnpm -C bff run deploy`），机密和迁移才会生效
+- 部署完成后仍要走本文档「2. App 认领服务器」认领、按需走「5. 管理界面」配 Access
+
+不想用按钮，跳过本节，从 1.1 开始手动走同样能完成部署。
+
 ### 1.1 建数据库
 
 ```powershell
@@ -46,13 +65,7 @@ pnpm -C bff exec wrangler d1 create pa-bff
 
 database_id 不是机密，可以提交到私人仓库，省得每次部署前重填。
 
-### 1.2 建表
-
-```powershell
-pnpm -C bff run db:migrate:remote
-```
-
-### 1.3 设置两个机密
+### 1.2 设置两个机密
 
 **MASTER_KEY**：加密所有第三方 Key 和推送令牌用的主密钥。先生成一个：
 
@@ -84,17 +97,19 @@ pnpm -C bff exec wrangler secret put CLAIM_CODE
 
 认领成功后这个口令就不再起作用（服务器只能被认领一次）；之后加设备用配对码。
 
-### 1.4 部署
+### 1.3 建表并部署
 
 ```powershell
 pnpm -C bff run deploy
 ```
 
+这一条命令做两件事：先对远程 D1 跑一遍迁移（建表，幂等），再部署 Worker。
+
 > 注意是 `pnpm -C bff run deploy`，**不是** `pnpm deploy`——后者是 pnpm 自带的另一个命令。
 
 部署成功会输出地址，形如 `https://pa-bff.<你的子域>.workers.dev`。每分钟一次的定时任务（Cron）随部署自动生效。
 
-### 1.5 检查
+### 1.4 检查
 
 浏览器打开 `https://pa-bff.<你的子域>.workers.dev/healthz`：
 
@@ -103,7 +118,7 @@ pnpm -C bff run deploy
 
 `lastTickAt` 一直是 null：到 Cloudflare 控制台 → Workers → pa-bff → 设置 → 触发器，确认有 `* * * * *` 的 Cron 触发器。
 
-### 1.6（可选）外部心跳
+### 1.5（可选）外部心跳
 
 想在服务器停摆时收到提醒，可以在 [healthchecks.io](https://healthchecks.io) 之类的服务建一个检查（周期 1 分钟、宽限 5 分钟），把它给的 ping 地址设为：
 
@@ -116,7 +131,7 @@ pnpm -C bff exec wrangler secret put HEALTHCHECK_URL
 ## 2. App 认领服务器
 
 1. 用 PANext 的 App（包名 `com.panext.app`）打开「设置 → 服务器」
-2. 在「认领」一栏填：服务器地址（第 1.4 步的 `https://…workers.dev`，不要带路径）、CLAIM_CODE、设备名
+2. 在「认领」一栏填：服务器地址（第 1.3 步的 `https://…workers.dev`，不要带路径）、CLAIM_CODE、设备名
 3. 点「认领」
 
 认领成功后：
@@ -252,10 +267,10 @@ pnpm -C bff exec wrangler tail
 
 | 现象 | 原因与处理 |
 |---|---|
-| 认领时提示「服务器没有设置 CLAIM_CODE」 | CLAIM_CODE 没设或短于 12 个字符，回到 1.3 |
+| 认领时提示「服务器没有设置 CLAIM_CODE」 | CLAIM_CODE 没设或短于 12 个字符，回到 1.2 |
 | 认领时提示「该服务器已被认领」 | 服务器只能认领一次；向已有的 owner 要配对码 |
 | 认领时提示「尝试次数过多」 | 连续输错 5 次，15 分钟后再试 |
-| `/healthz` 的 `lastTickAt` 一直为 null | Cron 触发器没生效，见 1.5 |
+| `/healthz` 的 `lastTickAt` 一直为 null | Cron 触发器没生效，见 1.4 |
 | 首页顶部「服务器暂时不可达，本次改为直连」 | 手机连不上服务器；数据改由手机直连，通知仍由服务器发 |
 | 密钥状态显示「无法解密」 | MASTER_KEY 被换过；在密钥页重新填写 |
 | 测试推送提示「本机还没有推送令牌」 | 这个 APK 没有配置 Firebase（4.2），或没有通知权限 |

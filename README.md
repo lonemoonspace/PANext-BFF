@@ -1,5 +1,7 @@
 # PANext BFF
 
+[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/lonemoonspace/PANext-BFF/tree/main/bff)
+
 一个跑在 Cloudflare Workers 免费版上的个人通勤助理后端：替手机按日程轮询挪威的公共数据源，把结果聚合成一个 JSON 给 Android App，并在服务端准点推送通知。
 
 - **数据源**：Entur（火车 / 公交实时班次）、MET Norway（天气）、Google Routes（驾车路况）、football-data.org（皇马赛程）
@@ -30,7 +32,7 @@ pnpm -C bff typecheck
 pnpm -C bff test
 ```
 
-部署见 [bff/DEPLOY.md](bff/DEPLOY.md)。
+点上面的按钮可以一键部署到你自己的 Cloudflare 账号（免费版即可）；完整步骤（含按钮做不到的部分：设置机密、App 认领）见 [bff/DEPLOY.md](bff/DEPLOY.md)。
 
 ## 关于这个仓库
 

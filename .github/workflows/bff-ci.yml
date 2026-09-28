@@ -1,4 +1,6 @@
 # BFF（bff/）的 CI：push / PR 改动了 bff/** 或 contracts/** 时运行。
+# 另有一步契约纪律检查：契约文件（bff/CONTRACT.md、bff/src/contract/**、contracts/**）
+# 只能由标题含 [gate] 的提交修改。
 
 name: BFF CI
 
@@ -55,7 +57,17 @@ jobs:
         working-directory: bff
         run: pnpm test
 
+      # 暂为只报告、不拦截：本机与 CI 的噪声都很大，最坏 tick 的 p95 在 7–18 ms 间波动，
+      # 真实上限以部署后 Cloudflare 的 CPU 时间指标为准（T8.3），由 G7 决定是否改调度结构后再改回拦截。
+      - name: CPU benchmark
+        working-directory: bff
+        continue-on-error: true
+        run: pnpm bench
+
       - name: Deploy dry-run
         working-directory: bff
         run: pnpm deploy:dry
 
+      # 契约文件（bff/src/contract/**、bff/CONTRACT.md、contracts/**）是冻结的，
+      # 只允许由标题含 "[gate]" 的关口提交修改。这里检查本次 push/PR 带来的提交范围内，
+      # 凡是改动了这些路径的提交，标题必须含 [gate]，否则视为违规。
